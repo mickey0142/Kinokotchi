@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Kinokotchi</string>
+    <string name="setup_pi_connection">Enter URL connected to your box here</string>
+    <string name="setup_connect_button">connect</string>
+    <string name="createchar_name">Enter your mushroom name here</string>
+    <string name="createchar_create_button">create</string>
+</resources>

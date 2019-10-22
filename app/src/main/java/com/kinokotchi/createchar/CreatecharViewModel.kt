@@ -1,0 +1,45 @@
+package com.kinokotchi.createchar
+
+import android.content.SharedPreferences
+import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+
+class CreatecharViewModel : ViewModel() {
+
+    private var viewModelJob = Job()
+    private val coroutineScope = CoroutineScope(viewModelJob + Dispatchers.Main)
+
+    override fun onCleared() {
+        super.onCleared()
+        viewModelJob.cancel()
+    }
+
+    private val _navigateToGame = MutableLiveData<Boolean>()
+    val navigateToGame: LiveData<Boolean>
+        get() = _navigateToGame
+
+    init {
+        _navigateToGame.value = false
+    }
+
+    fun doneNavigating() {
+        _navigateToGame.value = false
+    }
+
+    fun confirmClicked(name: String, sharedPreferences: SharedPreferences?) {
+        // check for various things to make sure that everything is ready before going to game fragment
+
+        if (sharedPreferences != null)
+        {
+            sharedPreferences.edit().putString("mushroomName", name).commit()
+            _navigateToGame.value = true
+        } else {
+            Log.i("createchar", "sharedPreferences is null")
+        }
+    }
+}

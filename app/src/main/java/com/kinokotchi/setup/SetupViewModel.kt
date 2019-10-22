@@ -1,13 +1,26 @@
 package com.kinokotchi.setup
 
 import android.content.SharedPreferences
+import android.os.Build
+import android.transition.Slide
+import android.transition.TransitionManager
 import android.util.Log
+import android.view.Gravity
+import android.view.LayoutInflater
+import android.widget.Button
+import android.widget.LinearLayout
+import android.widget.PopupWindow
 import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.navigation.NavController
+import androidx.navigation.fragment.findNavController
+import com.kinokotchi.R
 import com.kinokotchi.api.ConnectionResponse
 import com.kinokotchi.api.PiApi
+import com.kinokotchi.databinding.FragmentSetupBinding
+import com.kinokotchi.loading.LoadingFragmentDirections
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -43,7 +56,8 @@ class SetupViewModel : ViewModel() {
         _navigateToCreateChar.value = false
     }
 
-    fun confirmClicked(url: String, sharedPreferences: SharedPreferences?) {
+    fun confirmClicked(url: String, sharedPreferences: SharedPreferences?,
+                       binding: FragmentSetupBinding, inflater: LayoutInflater) {
         // send api request to raspberry pi to check for response before changing this to true and
         // add url to sharedPreferences
         _loading.value = true
@@ -56,6 +70,7 @@ class SetupViewModel : ViewModel() {
                 Log.i("setup", "failure : " + t.message)
                 _loading.value = false
                 // do something to notify user that something went wrong here. possibly popup or worst is toast
+                showPopup(binding, inflater)
             }
 
             override fun onResponse(call: Call<ConnectionResponse>, response: Response<ConnectionResponse>) {
@@ -72,5 +87,43 @@ class SetupViewModel : ViewModel() {
                 }
             }
         })
+    }
+    private fun showPopup(binding: FragmentSetupBinding, inflater: LayoutInflater){
+        val view = inflater.inflate(R.layout.popup_loading,null)
+
+        val popupWindow = PopupWindow(
+            view, // Custom view to show in popup window
+            LinearLayout.LayoutParams.WRAP_CONTENT, // Width of popup window
+            LinearLayout.LayoutParams.WRAP_CONTENT // Window height
+        )
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            popupWindow.elevation = 10.0F
+        }
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+            // Create a new slide animation for popup window enter transition
+            val slideIn = Slide()
+            slideIn.slideEdge = Gravity.TOP
+            popupWindow.enterTransition = slideIn
+
+            // Slide animation for popup window exit transition
+            val slideOut = Slide()
+            slideOut.slideEdge = Gravity.RIGHT
+            popupWindow.exitTransition = slideOut
+        }
+
+        val buttonPopup = view.findViewById<Button>(R.id.popup_loading_button)
+        buttonPopup.setOnClickListener {
+            popupWindow.dismiss()
+        }
+
+        TransitionManager.beginDelayedTransition(binding.setupRoot)
+        popupWindow.showAtLocation(
+            binding.setupRoot, // Location to display popup window
+            Gravity.CENTER, // Exact position of layout to display popup
+            0, // X offset
+            0 // Y offset
+        )
     }
 }

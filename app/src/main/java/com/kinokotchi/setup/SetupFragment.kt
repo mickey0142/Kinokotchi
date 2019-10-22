@@ -4,11 +4,18 @@ import android.Manifest
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
+import android.transition.Slide
+import android.transition.TransitionManager
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.LinearLayout
+import android.widget.PopupWindow
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
@@ -17,7 +24,9 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import com.kinokotchi.R
+import com.kinokotchi.databinding.FragmentLoadingBinding
 import com.kinokotchi.databinding.FragmentSetupBinding
+import com.kinokotchi.loading.LoadingFragmentDirections
 
 class SetupFragment : Fragment() {
 
@@ -60,8 +69,10 @@ class SetupFragment : Fragment() {
             Log.i("setup", "connectionURL is not empty - go to createchar fragment")
         }
 
+        // test this later
         binding.setupConnectButton.setOnClickListener {
-            viewModel.confirmClicked(binding.setupConnectionUrl.text.toString(), sharedPreference)
+            viewModel.confirmClicked(binding.setupConnectionUrl.text.toString(), sharedPreference,
+                binding, inflater)
         }
 
         return binding.root

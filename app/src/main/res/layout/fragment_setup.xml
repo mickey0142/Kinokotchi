@@ -15,7 +15,8 @@
     <!-- Start of the visible fragment layout using ConstraintLayout -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:id="@+id/setup_root">
 
         <TextView
             android:id="@+id/setup_connection_text"

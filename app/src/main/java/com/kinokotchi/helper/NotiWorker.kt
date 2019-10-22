@@ -65,7 +65,6 @@ class NotiWorker(appContext: Context, workerParams: WorkerParameters)
                             }
                         } else {
                             Log.i("noti", "get status failed")
-
                         }
                     }
                 })
@@ -74,9 +73,6 @@ class NotiWorker(appContext: Context, workerParams: WorkerParameters)
 
         // have to think of when to notify user in various cases
         // no noti when opening for first time or when there is no internet
-
-        // maybe have to move all this in to onResponse
-
 
         Log.i("noti", "do work !")
         return Result.success()

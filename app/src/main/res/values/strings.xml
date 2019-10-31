@@ -4,4 +4,7 @@
     <string name="setup_connect_button">connect</string>
     <string name="createchar_name">Enter your mushroom name here</string>
     <string name="createchar_create_button">create</string>
+    <string name="reconnect">reconnect</string>
+    <string name="not_connect">You are not connected</string>
+    <string name="loading">loading</string>
 </resources>

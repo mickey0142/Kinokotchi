@@ -69,7 +69,6 @@ class SetupFragment : Fragment() {
             Log.i("setup", "connectionURL is not empty - go to createchar fragment")
         }
 
-        // test this later
         binding.setupConnectButton.setOnClickListener {
             viewModel.confirmClicked(binding.setupConnectionUrl.text.toString(), sharedPreference,
                 binding, inflater)

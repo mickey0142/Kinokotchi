@@ -1,6 +1,7 @@
 package com.kinokotchi.api
 
 import android.content.SharedPreferences
+import android.util.Log
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -11,6 +12,7 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.*
 
 private const val baseURL = "https://unsurprised-hedgehog-6645.dataplicity.io"
+
 //private const val baseURL = "https://api.github.com/users/"
 
 private val moshi = Moshi.Builder()
@@ -43,9 +45,9 @@ interface PiApiService {
 }
 
 object PiApi {
-    val retrofitService : PiApiService by lazy {
-        retrofit.create(PiApiService::class.java)
-    }
+      var retrofitService : PiApiService = retrofit.create(PiApiService::class.java)// by lazy {
+//        retrofit.create(PiApiService::class.java)
+//    }
 
     // call this function before using piapi should change url to url in sharedpreferences
     private fun createNewUrl(url:String) {
@@ -54,7 +56,7 @@ object PiApi {
             .addCallAdapterFactory(CoroutineCallAdapterFactory())
             .baseUrl(url)
             .build()
-        retrofit.create(PiApiService::class.java)
+        retrofitService = retrofit.create(PiApiService::class.java)
     }
 
     fun setupURL(sharedPreferences: SharedPreferences?) {

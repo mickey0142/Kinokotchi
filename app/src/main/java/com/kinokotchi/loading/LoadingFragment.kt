@@ -51,6 +51,13 @@ class LoadingFragment : Fragment() {
 
         val sharedPreference =  context?.getSharedPreferences("Kinokotchi", Context.MODE_PRIVATE)
 
+        if (sharedPreference != null) {
+            sharedPreference.edit().putBoolean("connected", false).commit()
+            Log.i("loading", "set connected to false")
+        } else {
+            Log.i("loading", "sharedPreference is null")
+        }
+
         // ??? check internet connection don't know when should i use this
         // don't know if it work either... test it later
 //        InternetCheck(object : InternetCheck.Consumer {
@@ -86,8 +93,8 @@ class LoadingFragment : Fragment() {
                     override fun onFailure(call: Call<ConnectionResponse>, t: Throwable) {
                         Log.i("loading", "failure : " + t.message)
                         // go to game fragment without connection
+                        sharedPreference!!.edit().putBoolean("connected", false).commit()
                         showPopup(binding, inflater)
-
                         Log.i("loading", "go to game fragment - can't connect")
                     }
 
@@ -98,6 +105,7 @@ class LoadingFragment : Fragment() {
                         if (sharedPreference != null)
                         {
                             // go to game normally with connection
+                            sharedPreference.edit().putBoolean("connected", true).commit()
                             findNavController().navigate(LoadingFragmentDirections.actionLoadingFragmentToGameFragment())
                             Log.i("loading", "go to game fragment - connected")
                         } else {
@@ -116,8 +124,6 @@ class LoadingFragment : Fragment() {
         }
 
         binding.viewModel = viewModel
-
-        binding.loadingProgress.setOnClickListener{ WorkManager.getInstance(context!!).cancelAllWork()}
 
         return binding.root
     }

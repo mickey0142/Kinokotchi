@@ -1,11 +1,30 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:textViewStyle">@style/FontStyleTextView</item>
+        <item name="android:buttonStyle">@style/FontStyleButton</item>
+
+        <!--        this doesn't work somehow ???-->
+        <item name="android:editTextStyle">@style/FontStyleEditText</item>
+
+        
+    </style>
+
+    <style name="FontStyleTextView" parent="android:Widget.TextView">
+        <item name="android:fontFamily">@font/slkscr</item>
+    </style>
+
+    <style name="FontStyleButton" parent="android:Widget.Button">
+        <item name="android:fontFamily">@font/slkscr</item>
+    </style>
+
+    <style name="FontStyleEditText" parent="android:Widget.EditText">
+        <item name="android:fontFamily">@font/slkscr</item>
     </style>
 
 </resources>

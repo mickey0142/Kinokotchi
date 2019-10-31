@@ -2,6 +2,8 @@ package com.kinokotchi.game
 
 import android.content.SharedPreferences
 import android.util.Log
+import android.view.View
+import android.widget.ProgressBar
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -26,6 +28,10 @@ class GameViewModel : ViewModel() {
         super.onCleared()
         viewModelJob.cancel()
     }
+
+    private val _isConnected = MutableLiveData<Boolean>()
+    val isConnected: LiveData<Boolean>
+        get() = _isConnected
 
     private val _greenStatus = MutableLiveData<PiStatus>()
     val greenStatus: LiveData<PiStatus>
@@ -65,7 +71,6 @@ class GameViewModel : ViewModel() {
         PiApi.retrofitService.setGreenStatus(status).enqueue(object: Callback<PiStatus> {
             override fun onFailure(call: Call<PiStatus>, t: Throwable) {
                 Log.i("game", "failure : " + t.message)
-
 
             }
 
@@ -109,5 +114,34 @@ class GameViewModel : ViewModel() {
             sharePref.edit().remove("mushroomName").commit()
             Log.i("game", "value removed")
         }
+    }
+
+    fun reconnect(sharedPreferences: SharedPreferences, progress: ProgressBar) {
+        Log.i("game", "reconnecting...")
+        progress.visibility = View.VISIBLE
+        PiApi.retrofitService.checkIsOnline().enqueue(object: Callback<ConnectionResponse>{
+            override fun onFailure(call: Call<ConnectionResponse>, t: Throwable) {
+                Log.i("game", "failure : " + t.message)
+                _isConnected.value = false
+                progress.visibility = View.GONE
+            }
+
+            override fun onResponse(call: Call<ConnectionResponse>, response: Response<ConnectionResponse>) {
+                Log.i("game", "success : " + response.body() + " code : " + response.code())
+                _isConnected.value = true
+                progress.visibility = View.GONE
+                Log.i("game", "in confirmClicked : sharepref = " + sharedPreferences)
+                if (sharedPreferences != null)
+                {
+                    sharedPreferences.edit().putBoolean("connected", true).commit()
+                } else {
+                    Log.i("game", "sharedPreferences is null")
+                }
+            }
+        })
+    }
+
+    fun setIsConnect(isConnect: Boolean) {
+        _isConnected.value = isConnect
     }
 }

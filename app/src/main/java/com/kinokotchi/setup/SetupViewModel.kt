@@ -7,10 +7,7 @@ import android.transition.TransitionManager
 import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
-import android.widget.Button
-import android.widget.LinearLayout
-import android.widget.PopupWindow
-import android.widget.Toast
+import android.widget.*
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -28,6 +25,7 @@ import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.lang.IllegalArgumentException
 
 class SetupViewModel : ViewModel() {
 
@@ -64,32 +62,49 @@ class SetupViewModel : ViewModel() {
         //this one should work just have to match server response with what written in PiApiService.kt
         // change Call<inhere> inhere to an object which match server response
 //        PiApi.setupURL("https://unsurprised-hedgehog-6645.dataplicity.io")
-        PiApi.setupURL(url)
-        PiApi.retrofitService.checkIsOnline().enqueue(object: Callback<ConnectionResponse>{
-            override fun onFailure(call: Call<ConnectionResponse>, t: Throwable) {
-                Log.i("setup", "failure : " + t.message)
-                _loading.value = false
-                // do something to notify user that something went wrong here. possibly popup or worst is toast
-                showPopup(binding, inflater)
-            }
 
-            override fun onResponse(call: Call<ConnectionResponse>, response: Response<ConnectionResponse>) {
-                Log.i("setup", "success : " + response.body() + " code : " + response.code())
-                _loading.value = false
-
-                Log.i("setup", "in confirmClicked : sharepref = " + sharedPreferences)
-                if (sharedPreferences != null)
-                {
-                    sharedPreferences.edit().putString("connectionURL", url).commit()
-                    _navigateToCreateChar.value = true
-                } else {
-                    Log.i("setup", "sharedPreferences is null")
+        // maybe add if check for correct url
+        try {
+            PiApi.setupURL(url)
+            PiApi.retrofitService.checkIsOnline().enqueue(object: Callback<ConnectionResponse>{
+                override fun onFailure(call: Call<ConnectionResponse>, t: Throwable) {
+                    Log.i("setup", "failure : " + t.message)
+                    _loading.value = false
+                    showPopup(binding, inflater, "can't connect. check your url and internet connection")
                 }
-            }
-        })
+
+                override fun onResponse(call: Call<ConnectionResponse>, response: Response<ConnectionResponse>) {
+                    Log.i("setup", "success : " + response.body() + " code : " + response.code())
+                    _loading.value = false
+
+                    Log.i("setup", "in confirmClicked : sharepref = " + sharedPreferences)
+                    if (sharedPreferences != null)
+                    {
+                        sharedPreferences.edit().putBoolean("connected", true).commit()
+                        sharedPreferences.edit().putString("connectionURL", url).commit()
+                        _navigateToCreateChar.value = true
+                    } else {
+                        Log.i("setup", "sharedPreferences is null")
+                    }
+                }
+            })
+        } catch (e: IllegalArgumentException) {
+            _loading.value = false
+            showPopup(binding, inflater, "invalid url")
+        } catch (e: ExceptionInInitializerError) {
+            _loading.value = false
+            showPopup(binding, inflater, "please enter url")
+        } catch (e: Exception) {
+            _loading.value = false
+            showPopup(binding, inflater, "unexpected exception occured")
+        }
     }
-    private fun showPopup(binding: FragmentSetupBinding, inflater: LayoutInflater){
-        val view = inflater.inflate(R.layout.popup_loading,null)
+    private fun showPopup(binding: FragmentSetupBinding, inflater: LayoutInflater, message: String){
+        val view = inflater.inflate(R.layout.popup_setup,null)
+
+        val textView = view.findViewById<TextView>(R.id.popup_setup_text)
+
+        textView.text = message
 
         val popupWindow = PopupWindow(
             view, // Custom view to show in popup window
@@ -113,7 +128,7 @@ class SetupViewModel : ViewModel() {
             popupWindow.exitTransition = slideOut
         }
 
-        val buttonPopup = view.findViewById<Button>(R.id.popup_loading_button)
+        val buttonPopup = view.findViewById<Button>(R.id.popup_setup_button)
         buttonPopup.setOnClickListener {
             popupWindow.dismiss()
         }

@@ -49,6 +49,6 @@ class MainActivity : AppCompatActivity() {
             .build()
         WorkManager.getInstance(this)
             .enqueueUniquePeriodicWork("noti", ExistingPeriodicWorkPolicy.REPLACE, notiRequest)
-//        WorkManager.getInstance(this).cancelAllWork()
+        WorkManager.getInstance(this).cancelAllWork()
     }
 }

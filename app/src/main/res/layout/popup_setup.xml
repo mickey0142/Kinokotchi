@@ -4,12 +4,14 @@
     android:layout_height="match_parent">
 
     <TextView
+        android:id="@+id/popup_setup_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="can't connect to box try again later"
         android:layout_gravity="center"/>
 
     <Button
+        android:id="@+id/popup_setup_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="close"

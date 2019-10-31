@@ -51,7 +51,8 @@
             android:text="@string/setup_connect_button"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/setup_connection_url" />
+            app:layout_constraintTop_toBottomOf="@+id/setup_connection_url"
+            android:background="@drawable/button_background_selector"/>
 
         <ProgressBar
             android:id="@+id/setup_progress_bar"

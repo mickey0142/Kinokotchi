@@ -11,8 +11,6 @@
 
         <!--        this doesn't work somehow ???-->
         <item name="android:editTextStyle">@style/FontStyleEditText</item>
-
-
     </style>
 
     <style name="FontStyleTextView" parent="android:Widget.TextView">

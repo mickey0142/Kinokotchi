@@ -29,6 +29,8 @@
                 android:id="@+id/game_light_box"
                 android:layout_width="64dp"
                 android:layout_height="64dp"
+                android:background="@android:color/background_light"
+                android:foreground="@drawable/box"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/game_water_box"
@@ -38,7 +40,7 @@
                     android:id="@+id/game_light_level"
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
-                    android:background="@drawable/gray_button_pressed"
+                    android:background="@android:color/holo_green_light"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />
@@ -48,6 +50,8 @@
                 android:id="@+id/game_water_box"
                 android:layout_width="64dp"
                 android:layout_height="64dp"
+                android:background="@android:color/background_light"
+                android:foreground="@drawable/box"
                 android:padding="0dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -58,17 +62,18 @@
                     android:id="@+id/game_water_level2"
                     android:layout_width="match_parent"
                     android:layout_height="20dp"
-                    android:background="@drawable/gray_button_pressed"
+                    android:background="@android:color/holo_orange_light"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:srcCompat="@drawable/gray_button_pressed" />
+                    app:layout_constraintStart_toStartOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/game_temperature_box"
                 android:layout_width="64dp"
                 android:layout_height="64dp"
+                android:background="@android:color/background_light"
+                android:foreground="@drawable/box"
                 android:padding="0dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/game_water_box"
@@ -79,7 +84,7 @@
                     android:id="@+id/game_temperature_level"
                     android:layout_width="match_parent"
                     android:layout_height="20dp"
-                    android:background="@drawable/gray_button_pressed"
+                    android:background="@android:color/holo_red_light"
                     android:padding="0dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -95,7 +100,7 @@
                 app:layout_constraintEnd_toEndOf="@+id/game_temperature_box"
                 app:layout_constraintStart_toStartOf="@+id/game_temperature_box"
                 app:layout_constraintTop_toTopOf="@+id/game_temperature_box"
-                app:srcCompat="@drawable/ic_alert" />
+                app:srcCompat="@drawable/thermometer" />
 
             <ImageView
                 android:id="@+id/game_water_icon"
@@ -105,7 +110,7 @@
                 app:layout_constraintEnd_toEndOf="@+id/game_water_box"
                 app:layout_constraintStart_toStartOf="@+id/game_water_box"
                 app:layout_constraintTop_toTopOf="@+id/game_water_box"
-                app:srcCompat="@drawable/ic_alert" />
+                app:srcCompat="@drawable/moisture" />
 
             <ImageView
                 android:id="@+id/game_light_icon"
@@ -115,7 +120,7 @@
                 app:layout_constraintEnd_toEndOf="@+id/game_light_box"
                 app:layout_constraintStart_toStartOf="@+id/game_light_box"
                 app:layout_constraintTop_toTopOf="@+id/game_light_box"
-                app:srcCompat="@drawable/ic_alert" />
+                app:srcCompat="@drawable/light" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -133,6 +138,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="48dp"
+                android:background="@drawable/button_background_selector"
                 android:onClick="@{() -> viewModel.getGreen()}"
                 android:text="green"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -144,6 +150,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="44dp"
+                android:background="@drawable/button_background_selector"
                 android:onClick="@{() -> viewModel.getRed()}"
                 android:text="red"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -155,6 +162,7 @@
                 android:id="@+id/temp_reset"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:background="@drawable/button_background_selector"
                 android:text="temp reset"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -256,7 +264,8 @@
             android:layout_width="30dp"
             android:layout_height="100dp"
             android:layout_marginEnd="24dp"
-            android:background="@drawable/gray_button"
+            android:background="@android:color/background_light"
+            android:foreground="@drawable/box_9"
             android:padding="0dp"
             app:layout_constraintBottom_toTopOf="@+id/game_bottom_panel"
             app:layout_constraintEnd_toEndOf="parent"
@@ -266,7 +275,7 @@
                 android:id="@+id/game_water_level"
                 android:layout_width="match_parent"
                 android:layout_height="30dp"
-                android:background="@drawable/gray_button_pressed"
+                android:background="@android:color/holo_blue_bright"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.529"
@@ -275,12 +284,13 @@
 
         <ImageView
             android:id="@+id/game_water_level_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="@drawable/white_box"
             app:layout_constraintEnd_toEndOf="@+id/game_water_level_box"
             app:layout_constraintStart_toStartOf="@+id/game_water_level_box"
             app:layout_constraintTop_toBottomOf="@+id/game_water_level_box"
-            app:srcCompat="@drawable/ic_alert" />
+            app:srcCompat="@drawable/droplet" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

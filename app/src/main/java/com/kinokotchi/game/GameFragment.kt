@@ -1,6 +1,7 @@
 package com.kinokotchi.game
 
 import android.content.Context
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -53,6 +54,13 @@ class GameFragment : Fragment() {
                 binding.gameKinoko.visibility = View.GONE
             }
         })
+
+        // add variable in viewmodel to keep status data observe it here
+        // then call and create function in viewmodel to change color in viewmodel sending imageview to be set in function argument
+        // in that function set color according to status level
+        binding.gameTemperatureLevel.setBackgroundColor(Color.RED)
+        binding.gameWaterLevel2.setBackgroundColor(Color.YELLOW)
+        binding.gameLightLevel.setBackgroundColor(Color.GREEN)
 
         binding.setLifecycleOwner(this)
 

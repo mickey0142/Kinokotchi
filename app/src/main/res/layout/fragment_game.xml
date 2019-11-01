@@ -18,6 +18,106 @@
         android:layout_height="match_parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/game_middle_panel"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="@android:color/holo_orange_light"
+            app:layout_constraintBottom_toTopOf="@+id/game_bottom_panel"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/game_top_panel"
+            app:layout_constraintVertical_bias="0.0">
+
+            <ImageView
+                android:id="@+id/game_light_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:srcCompat="@drawable/button_background_selector" />
+
+            <ImageView
+                android:id="@+id/game_light_button_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/game_light_button"
+                app:layout_constraintStart_toStartOf="@+id/game_light_button"
+                app:layout_constraintTop_toTopOf="@+id/game_light_button"
+                app:srcCompat="@drawable/light" />
+
+            <ImageView
+                android:id="@+id/game_kinoko"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/kurumi"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:srcCompat="@tools:sample/avatars" />
+
+            <TextView
+                android:id="@+id/game_mushroom_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="mushroom name here" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/game_disconnect_layout"
+                android:layout_width="250dp"
+                android:layout_height="200dp"
+                android:background="@drawable/white_box_9"
+                android:padding="24dp"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:id="@+id/game_disconnect_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/not_connect"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.19999999" />
+
+                <pl.droidsonroids.gif.GifImageView
+                    android:id="@+id/game_reconnect_progress"
+                    style="?android:attr/progressBarStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:src="@drawable/progressbar"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/game_disconnect_text" />
+
+                <Button
+                    android:id="@+id/game_reconnect_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:background="@drawable/button_background_selector"
+                    android:drawableStart="@drawable/ic_no_connection"
+                    android:text="@string/reconnect"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/game_disconnect_text" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/game_top_panel"
             android:layout_width="match_parent"
             android:layout_height="200dp"
@@ -26,32 +126,41 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/game_light_box"
+                android:id="@+id/game_sleepiness_box"
                 android:layout_width="64dp"
                 android:layout_height="64dp"
                 android:background="@android:color/background_light"
-                android:foreground="@drawable/box"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/game_water_box"
+                app:layout_constraintStart_toEndOf="@+id/game_moisture_box"
                 app:layout_constraintTop_toTopOf="parent">
 
                 <ImageView
-                    android:id="@+id/game_light_level"
+                    android:id="@+id/game_sleepiness_level"
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
                     android:background="@android:color/holo_green_light"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="1.0"
                     app:layout_constraintStart_toStartOf="parent" />
+
+                <ImageView
+                    android:id="@+id/game_sleepiness_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/sleepiness" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/game_water_box"
+                android:id="@+id/game_moisture_box"
                 android:layout_width="64dp"
                 android:layout_height="64dp"
                 android:background="@android:color/background_light"
-                android:foreground="@drawable/box"
                 android:padding="0dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -59,9 +168,9 @@
                 app:layout_constraintTop_toTopOf="parent">
 
                 <ImageView
-                    android:id="@+id/game_water_level2"
+                    android:id="@+id/game_moisture_level"
                     android:layout_width="match_parent"
-                    android:layout_height="20dp"
+                    android:layout_height="25dp"
                     android:background="@android:color/holo_orange_light"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -73,10 +182,9 @@
                 android:layout_width="64dp"
                 android:layout_height="64dp"
                 android:background="@android:color/background_light"
-                android:foreground="@drawable/box"
                 android:padding="0dp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/game_water_box"
+                app:layout_constraintEnd_toStartOf="@+id/game_moisture_box"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
@@ -106,21 +214,11 @@
                 android:id="@+id/game_water_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:layout_constraintBottom_toBottomOf="@+id/game_water_box"
-                app:layout_constraintEnd_toEndOf="@+id/game_water_box"
-                app:layout_constraintStart_toStartOf="@+id/game_water_box"
-                app:layout_constraintTop_toTopOf="@+id/game_water_box"
+                app:layout_constraintBottom_toBottomOf="@+id/game_moisture_box"
+                app:layout_constraintEnd_toEndOf="@+id/game_moisture_box"
+                app:layout_constraintStart_toStartOf="@+id/game_moisture_box"
+                app:layout_constraintTop_toTopOf="@+id/game_moisture_box"
                 app:srcCompat="@drawable/moisture" />
-
-            <ImageView
-                android:id="@+id/game_light_icon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintBottom_toBottomOf="@+id/game_light_box"
-                app:layout_constraintEnd_toEndOf="@+id/game_light_box"
-                app:layout_constraintStart_toStartOf="@+id/game_light_box"
-                app:layout_constraintTop_toTopOf="@+id/game_light_box"
-                app:srcCompat="@drawable/light" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -170,49 +268,6 @@
                 app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/game_disconnect_layout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="97dp"
-            android:visibility="gone"
-            app:layout_constraintBottom_toTopOf="@+id/game_bottom_panel"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/game_top_panel">
-
-            <TextView
-                android:id="@+id/game_disconnect_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/not_connect"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <ProgressBar
-                android:id="@+id/game_reconnect_progress"
-                style="?android:attr/progressBarStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/game_disconnect_text" />
-
-            <Button
-                android:id="@+id/game_reconnect_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:background="#FFFFFF"
-                android:drawableStart="@drawable/ic_no_connection"
-                android:text="@string/reconnect"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/game_reconnect_progress" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
         <TextView
             android:id="@+id/led_green_text"
             android:layout_width="match_parent"
@@ -238,34 +293,12 @@
             app:layout_constraintTop_toBottomOf="@+id/led_green_text" />
         <!--@{viewModel.redStatus.LEDState}-->
 
-        <TextView
-            android:id="@+id/game_mushroom_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toTopOf="@+id/game_kinoko"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/game_top_panel"
-            tools:text="mushroom name here" />
-
-        <ImageView
-            android:id="@+id/game_kinoko"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/kurumi"
-            app:layout_constraintBottom_toTopOf="@+id/game_bottom_panel"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/game_top_panel"
-            tools:srcCompat="@tools:sample/avatars" />
-
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/game_water_level_box"
-            android:layout_width="30dp"
+            android:layout_width="32dp"
             android:layout_height="100dp"
             android:layout_marginEnd="24dp"
             android:background="@android:color/background_light"
-            android:foreground="@drawable/box_9"
             android:padding="0dp"
             app:layout_constraintBottom_toTopOf="@+id/game_bottom_panel"
             app:layout_constraintEnd_toEndOf="parent"
@@ -280,6 +313,16 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.529"
                 app:layout_constraintStart_toStartOf="parent" />
+
+            <ImageView
+                android:id="@+id/game_water_level_border"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/box_9"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <ImageView

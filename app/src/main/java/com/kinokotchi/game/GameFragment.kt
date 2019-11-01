@@ -31,6 +31,8 @@ class GameFragment : Fragment() {
 
         binding.viewModel = viewModel
 
+        viewModel.initValue(sharedPreference)
+
         // app crash when trying to use piapi which will cause app to create object piapi which will
         // trying to create retrofitservice from invalid url which will make app crash
 //        viewModel.setupAPIUrl(sharedPreference)
@@ -40,12 +42,26 @@ class GameFragment : Fragment() {
         }
 
         binding.gameReconnectButton.setOnClickListener {
-            viewModel.reconnect(sharedPreference!!, binding.gameReconnectProgress)
+            viewModel.reconnect(sharedPreference!!, binding.gameReconnectProgress, binding.gameReconnectButton)
             binding.gameReconnectProgress.visibility = View.VISIBLE
         }
 
+        binding.gameLightButton.setOnClickListener {
+//            binding.gameMiddlePanel.setBackgroundResource(R.drawable.box)
+            viewModel.toggleLight(sharedPreference)
+        }
+
+        viewModel.light.observe(this, Observer { light ->
+            if (light.equals("1")) {
+                binding.gameMiddlePanel.setBackgroundColor(Color.YELLOW)
+            } else {
+                binding.gameMiddlePanel.setBackgroundColor(Color.BLUE)
+            }
+        })
+
         viewModel.isConnected.observe(this, Observer { isConnected ->
             binding.gameReconnectProgress.visibility = View.GONE
+            binding.gameReconnectButton.visibility = View.VISIBLE
             if (isConnected) {
                 binding.gameDisconnectLayout.visibility = View.GONE
                 binding.gameKinoko.visibility = View.VISIBLE
@@ -59,8 +75,8 @@ class GameFragment : Fragment() {
         // then call and create function in viewmodel to change color in viewmodel sending imageview to be set in function argument
         // in that function set color according to status level
         binding.gameTemperatureLevel.setBackgroundColor(Color.RED)
-        binding.gameWaterLevel2.setBackgroundColor(Color.YELLOW)
-        binding.gameLightLevel.setBackgroundColor(Color.GREEN)
+        binding.gameMoistureLevel.setBackgroundColor(Color.YELLOW)
+        binding.gameSleepinessLevel.setBackgroundColor(Color.GREEN)
 
         binding.setLifecycleOwner(this)
 

@@ -1,8 +1,10 @@
 package com.kinokotchi.game
 
 import android.content.SharedPreferences
+import android.graphics.Color
 import android.util.Log
 import android.view.View
+import android.widget.Button
 import android.widget.ProgressBar
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -41,6 +43,10 @@ class GameViewModel : ViewModel() {
     val redStatus: LiveData<PiStatus>
         get() = _redStatus
 
+    private val _light = MutableLiveData<String>()
+    val light: LiveData<String>
+        get() = _light
+
 //    val redLED: LiveData<String> =
 //        get() = redStatus.value?.green.toString() // fix green to state or something later - fix in pi code too
 //    val greenLED: LiveData<String>
@@ -54,7 +60,7 @@ class GameViewModel : ViewModel() {
     }
 
     private fun getGreenStatus(){
-        Log.i("game", "getGreenStatus called");
+        Log.i("game", "getGreenStatus called")
 //        coroutineScope.launch {
 //            var getPropertyDeferred = PiApi.retrofitService.getGreenStatus()
 //            var result = getPropertyDeferred.await()
@@ -85,7 +91,7 @@ class GameViewModel : ViewModel() {
     }
 
     private fun getRedStatus(){
-        Log.i("game", "getRedStatus called");
+        Log.i("game", "getRedStatus called")
         coroutineScope.launch {
             var getPropertyDeferred = PiApi.retrofitService.getRedStatus()
             var result = getPropertyDeferred.await()
@@ -116,20 +122,23 @@ class GameViewModel : ViewModel() {
         }
     }
 
-    fun reconnect(sharedPreferences: SharedPreferences, progress: ProgressBar) {
+    fun reconnect(sharedPreferences: SharedPreferences, progress: View, button: Button) {
         Log.i("game", "reconnecting...")
         progress.visibility = View.VISIBLE
+        button.visibility = View.GONE
         PiApi.retrofitService.checkIsOnline().enqueue(object: Callback<ConnectionResponse>{
             override fun onFailure(call: Call<ConnectionResponse>, t: Throwable) {
                 Log.i("game", "failure : " + t.message)
                 _isConnected.value = false
                 progress.visibility = View.GONE
+                button.visibility = View.VISIBLE
             }
 
             override fun onResponse(call: Call<ConnectionResponse>, response: Response<ConnectionResponse>) {
                 Log.i("game", "success : " + response.body() + " code : " + response.code())
                 _isConnected.value = true
                 progress.visibility = View.GONE
+                button.visibility = View.VISIBLE
                 Log.i("game", "in confirmClicked : sharepref = " + sharedPreferences)
                 if (sharedPreferences != null)
                 {
@@ -143,5 +152,20 @@ class GameViewModel : ViewModel() {
 
     fun setIsConnect(isConnect: Boolean) {
         _isConnected.value = isConnect
+    }
+
+    fun toggleLight(sharePref: SharedPreferences?){
+        // move all this if into after success in sending value to raspberry pi
+        if (sharePref?.getString("light", "1").equals("1")) {
+            sharePref?.edit()?.putString("light", "0")?.commit()
+            _light.value = "0"
+        } else {
+            sharePref?.edit()?.putString("light", "1")?.commit()
+            _light.value = "1"
+        }
+    }
+
+    fun initValue(sharePref: SharedPreferences?) {
+        _light.value = sharePref?.getString("light", "1")
     }
 }

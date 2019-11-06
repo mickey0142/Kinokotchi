@@ -87,6 +87,8 @@ class LoadingFragment : Fragment() {
 
         // refactor by moving all this to viewmodel later
         if (sharedPreference?.getString("connectionURL", "") != "") {
+            // maybe setup url for PiApi here from sharepref first
+
             if (sharedPreference?.getString("mushroomName", "") != "") {
                 // get request before go to game fragment
                 PiApi.retrofitService.checkIsOnline().enqueue(object: Callback<ConnectionResponse> {

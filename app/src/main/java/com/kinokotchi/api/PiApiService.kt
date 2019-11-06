@@ -30,18 +30,40 @@ interface PiApiService {
     @GET("/led/green/")// use @Url url:string to change base url ugly but it should work
     fun getGreenStatus() : Call<PiStatus>
 
-    @GET("/led/red/")
-    fun getRedStatus() : Deferred<PiStatus>
-
     @GET("/")
     fun checkIsOnline() : Call<ConnectionResponse>
-
-    @POST("/led/red/")
-    fun setRedStatus() : Call<PiStatus>
 
     @FormUrlEncoded
     @POST("/led/green/")
     fun setGreenStatus(@Field("state") state:String) : Call<PiStatus>
+
+    @GET("/light")
+    fun getLightStatus() : Call<Light>
+
+    @FormUrlEncoded
+    @POST("/light")
+    fun setLightStatus(@Field("state") state: String) : Call<Light>
+
+    @GET("/moisture")
+    fun getMoisture() : Call<Moisture>
+
+    @GET("/temperature")
+    fun getTemperature() : Call<Temperature>
+
+    @GET("/growth")
+    fun getGrowth() : Call<Growth>
+
+    @GET("/fan")
+    fun getFanStatus() : Call<Integer> // change this in to class later
+
+    @FormUrlEncoded
+    @POST("/fan")
+    fun setFanStatus(@Field("state") state: String) : Call<Integer>
+
+    @FormUrlEncoded
+    @POST("/water")
+    fun water(@Field("size") size: String) : Call<Moisture> // maybe change this to just receive that it is success
+
 }
 
 object PiApi {

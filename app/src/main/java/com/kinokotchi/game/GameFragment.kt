@@ -65,9 +65,15 @@ class GameFragment : Fragment() {
             if (isConnected) {
                 binding.gameDisconnectLayout.visibility = View.GONE
                 binding.gameKinoko.visibility = View.VISIBLE
+
+                // enable all button here
+                binding.gameLightButton.isEnabled = true
             } else {
                 binding.gameDisconnectLayout.visibility = View.VISIBLE
                 binding.gameKinoko.visibility = View.GONE
+
+                // disable all button here
+//                binding.gameLightButton.isEnabled = false
             }
         })
 

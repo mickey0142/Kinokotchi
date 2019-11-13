@@ -86,13 +86,14 @@ class LoadingFragment : Fragment() {
 //        }
 
         // refactor by moving all this to viewmodel later
-        if (sharedPreference?.getString("connectionURL", "") != "") {
+        val connectionUrl = sharedPreference?.getString("connectionURL", "")
+        if (connectionUrl != "") {
             // maybe setup url for PiApi here from sharepref first
-
+            if (connectionUrl != null) PiApi.setupURL(connectionUrl)
             if (sharedPreference?.getString("mushroomName", "") != "") {
                 // get request before go to game fragment
-                PiApi.retrofitService.checkIsOnline().enqueue(object: Callback<ConnectionResponse> {
-                    override fun onFailure(call: Call<ConnectionResponse>, t: Throwable) {
+                PiApi.retrofitService.getAllStatus().enqueue(object: Callback<PiStatus> {
+                    override fun onFailure(call: Call<PiStatus>, t: Throwable) {
                         Log.i("loading", "failure : " + t.message)
                         // go to game fragment without connection
                         sharedPreference!!.edit().putBoolean("connected", false).commit()
@@ -100,16 +101,22 @@ class LoadingFragment : Fragment() {
                         Log.i("loading", "go to game fragment - can't connect")
                     }
 
-                    override fun onResponse(call: Call<ConnectionResponse>, response: Response<ConnectionResponse>) {
+                    override fun onResponse(call: Call<PiStatus>, response: Response<PiStatus>) {
                         Log.i("loading", "success : " + response.body() + " code : " + response.code())
 
                         Log.i("loading", "sharepref = " + sharedPreference)
                         if (sharedPreference != null)
                         {
                             // go to game normally with connection
-                            sharedPreference.edit().putBoolean("connected", true).commit()
-                            findNavController().navigate(LoadingFragmentDirections.actionLoadingFragmentToGameFragment())
+                            sharedPreference.edit().putBoolean("connected", true)
+                                .putInt("lightStatus", response.body()?.light!!)
+                                .putInt("fanStatus", response.body()?.fan!!)
+                                .putFloat("moisture", response.body()?.moisture!!.toFloat())
+                                .putFloat("temperature", response.body()?.temperature!!.toFloat())
+                                .putInt("growth", response.body()?.growth!!)
+                                .commit()
                             Log.i("loading", "go to game fragment - connected")
+                            findNavController().navigate(LoadingFragmentDirections.actionLoadingFragmentToGameFragment())
                         } else {
                             Log.i("loading", "sharedPreferences is null")
                         }

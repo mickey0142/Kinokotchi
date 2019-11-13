@@ -56,7 +56,7 @@
                 android:layout_height="200dp"
                 android:background="@drawable/white_box_9"
                 android:padding="24dp"
-                android:visibility="visible"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -95,6 +95,82 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/game_disconnect_text" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/game_food_selection"
+                android:layout_width="250dp"
+                android:layout_height="200dp"
+                android:background="@drawable/white_box_9"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <Button
+                    android:id="@+id/game_food_left"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/button_background_selector"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <Button
+                    android:id="@+id/game_food_yes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/button_background_selector"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/game_food_no"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintHorizontal_chainStyle="packed"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <Button
+                    android:id="@+id/game_food_no"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/button_background_selector"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toEndOf="@+id/game_food_yes" />
+
+                <Button
+                    android:id="@+id/game_food_right"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/button_background_selector"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:id="@+id/game_food_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintBottom_toTopOf="@+id/game_food_name"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.32999998"
+                    app:layout_constraintVertical_chainStyle="packed"
+                    app:srcCompat="@drawable/droplet" />
+
+                <TextView
+                    android:id="@+id/game_food_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/size_small"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/game_food_icon" />
+
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -157,6 +233,16 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />
+
+                <ImageView
+                    android:id="@+id/game_water_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/moisture" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -180,27 +266,17 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias=" 0.5"
                     app:layout_constraintStart_toStartOf="parent" />
+
+                <ImageView
+                    android:id="@+id/game_temperature_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/thermometer" />
             </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <ImageView
-                android:id="@+id/game_temperature_icon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintBottom_toBottomOf="@+id/game_temperature_box"
-                app:layout_constraintEnd_toEndOf="@+id/game_temperature_box"
-                app:layout_constraintStart_toStartOf="@+id/game_temperature_box"
-                app:layout_constraintTop_toTopOf="@+id/game_temperature_box"
-                app:srcCompat="@drawable/thermometer" />
-
-            <ImageView
-                android:id="@+id/game_water_icon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintBottom_toBottomOf="@+id/game_moisture_box"
-                app:layout_constraintEnd_toEndOf="@+id/game_moisture_box"
-                app:layout_constraintStart_toStartOf="@+id/game_moisture_box"
-                app:layout_constraintTop_toTopOf="@+id/game_moisture_box"
-                app:srcCompat="@drawable/moisture" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -220,18 +296,27 @@
                 android:background="@drawable/button_background_selector"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/game_feed_button"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <Button
+                android:id="@+id/game_fan_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/button_background_selector"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/game_feed_button"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <Button
-                android:id="@+id/temp_reset"
+                android:id="@+id/game_feed_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/button_background_selector"
-                android:text="temp reset"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/game_light_button"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
@@ -243,6 +328,26 @@
                 app:layout_constraintStart_toStartOf="@+id/game_light_button"
                 app:layout_constraintTop_toTopOf="@+id/game_light_button"
                 app:srcCompat="@drawable/light" />
+
+            <ImageView
+                android:id="@+id/game_feed_button_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="@+id/game_feed_button"
+                app:layout_constraintEnd_toEndOf="@+id/game_feed_button"
+                app:layout_constraintStart_toStartOf="@+id/game_feed_button"
+                app:layout_constraintTop_toTopOf="@+id/game_feed_button"
+                app:srcCompat="@drawable/watering_can" />
+
+            <ImageView
+                android:id="@+id/game_fan_button_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="@+id/game_fan_button"
+                app:layout_constraintEnd_toEndOf="@+id/game_fan_button"
+                app:layout_constraintStart_toStartOf="@+id/game_fan_button"
+                app:layout_constraintTop_toTopOf="@+id/game_fan_button"
+                app:srcCompat="@drawable/fan" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 <!--     this is temporary debug text remove thisss-->
@@ -252,7 +357,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
-            android:text="@{String.valueOf(viewModel.light)}"
+            android:text="@{String.valueOf(viewModel.lightStatus) + String.valueOf(viewModel.fanStatus)}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.49"
             app:layout_constraintStart_toStartOf="parent"

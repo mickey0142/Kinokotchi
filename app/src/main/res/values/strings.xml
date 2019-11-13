@@ -7,4 +7,7 @@
     <string name="reconnect">reconnect</string>
     <string name="not_connect">You are not connected</string>
     <string name="loading">loading</string>
+    <string name="size_small">Size : Small</string>
+    <string name="size_medium">Size : Medium</string>
+    <string name="size_large">Size : Large</string>
 </resources>

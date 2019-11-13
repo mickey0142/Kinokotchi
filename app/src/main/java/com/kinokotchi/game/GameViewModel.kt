@@ -9,10 +9,7 @@ import android.widget.ProgressBar
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.kinokotchi.api.ConnectionResponse
-import com.kinokotchi.api.Light
-import com.kinokotchi.api.PiApi
-import com.kinokotchi.api.PiStatus
+import com.kinokotchi.api.*
 import com.kinokotchi.databinding.FragmentGameBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -36,9 +33,29 @@ class GameViewModel : ViewModel() {
     val isConnected: LiveData<Boolean>
         get() = _isConnected
 
-    private val _light = MutableLiveData<String>()
-    val light: LiveData<String>
-        get() = _light
+    private val _lightStatus = MutableLiveData<String>()
+    val lightStatus: LiveData<String>
+        get() = _lightStatus
+
+    private val _fanStatus = MutableLiveData<String>()
+    val fanStatus: LiveData<String>
+        get() = _fanStatus
+
+    private val _moisture = MutableLiveData<Float>()
+    val moisture: LiveData<Float>
+        get() = _moisture
+
+    private val _temperature = MutableLiveData<Float>()
+    val temperature: LiveData<Float>
+        get() = _temperature
+
+    private val _growth = MutableLiveData<Int>()
+    val growth: LiveData<Int>
+        get() = _growth
+
+    private val _foodChoice = MutableLiveData<Int>()
+    val foodChoice: LiveData<Int>
+        get() = _foodChoice
 
     fun setupAPIUrl(sharePref: SharedPreferences?) {
         if (sharePref != null)
@@ -89,11 +106,9 @@ class GameViewModel : ViewModel() {
 
     fun toggleLight(sharePref: SharedPreferences?){
         var status = "1"
-        if (sharePref?.getString("light", "1").equals("1")) {
-            sharePref?.edit()?.putString("light", "0")?.commit()
+        if (sharePref?.getString("lightStatus", "1").equals("1")) {
             status = "0"
         } else {
-            sharePref?.edit()?.putString("light", "1")?.commit()
             status = "1"
         }
         PiApi.retrofitService.setLightStatus(status).enqueue(object: Callback<Light> {
@@ -107,12 +122,81 @@ class GameViewModel : ViewModel() {
                 response: Response<Light>
             ) {
                 Log.i("game", "success : " + response.body() + " code : " + response.code())
-                _light.value = response.body()?.state.toString()
+                _lightStatus.value = response.body()?.state.toString()
+                sharePref?.edit()?.putString("lightStatus", _lightStatus.value)?.commit()
+            }
+        })
+    }
+
+    fun toggleFan(sharePref: SharedPreferences?) {
+        var status = "1"
+        if (sharePref?.getString("fanStatus", "1").equals("1")) {
+            status = "0"
+        } else {
+            status = "1"
+        }
+        PiApi.retrofitService.setFanStatus(status).enqueue(object: Callback<Light> {
+            override fun onFailure(call: Call<Light>, t: Throwable) {
+                Log.i("game", "failure from toggleFan : " + t.message)
+                _isConnected.value = false
+            }
+
+            override fun onResponse(
+                call: Call<Light>,
+                response: Response<Light>
+            ) {
+                Log.i("game", "success : " + response.body() + " code : " + response.code())
+                _fanStatus.value = response.body()?.state.toString()
+                sharePref?.edit()?.putString("fanStatus", _fanStatus.value)?.commit()
+            }
+        })
+    }
+
+    fun initFoodChoice() {
+        _foodChoice.value = 1
+    }
+
+    fun changeFood(direction: Int) {
+        _foodChoice.value = _foodChoice.value?.plus(direction)
+        if (_foodChoice.value?.compareTo(0) == 0) {
+            _foodChoice.value = 3
+        }
+        if (_foodChoice.value?.compareTo(4) == 0) {
+            _foodChoice.value = 1
+        }
+    }
+
+    fun feed() {
+        var size: String
+        if (_foodChoice.value == 1) {
+            size = "small"
+        } else if (_foodChoice.value == 2) {
+            size = "medium"
+        } else if (_foodChoice.value == 3) {
+            size = "large"
+        } else {
+            size = "error"
+        }
+        PiApi.retrofitService.water(size).enqueue(object: Callback<Moisture> {
+            override fun onFailure(call: Call<Moisture>, t: Throwable) {
+                Log.i("game", "failure from feed : " + t.message)
+                _isConnected.value = false
+            }
+
+            override fun onResponse(
+                call: Call<Moisture>,
+                response: Response<Moisture>
+            ) {
+                Log.i("game", "success watering: " + response.body() + " code : " + response.code())
             }
         })
     }
 
     fun initValue(sharePref: SharedPreferences?) {
-        _light.value = sharePref?.getString("light", "1")
+        _lightStatus.value = sharePref?.getString("lightStatus", "1")
+        _fanStatus.value = sharePref?.getString("fanStatus", "0")
+        _moisture.value = sharePref?.getFloat("moisture", -1.0F)
+        _temperature.value = sharePref?.getFloat("temperature", -1.0F)
+        _growth.value = sharePref?.getInt("growth", -1)
     }
 }

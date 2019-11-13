@@ -26,44 +26,38 @@ private var retrofit = Retrofit.Builder()
     .build()
 
 interface PiApiService {
-
-    @GET("/led/green/")// use @Url url:string to change base url ugly but it should work
-    fun getGreenStatus() : Call<PiStatus>
-
     @GET("/")
     fun checkIsOnline() : Call<ConnectionResponse>
 
-    @FormUrlEncoded
-    @POST("/led/green/")
-    fun setGreenStatus(@Field("state") state:String) : Call<PiStatus>
-
-    @GET("/light")
+    @GET("/light/")
     fun getLightStatus() : Call<Light>
 
     @FormUrlEncoded
-    @POST("/light")
+    @POST("/light/")
     fun setLightStatus(@Field("state") state: String) : Call<Light>
 
-    @GET("/moisture")
+    @GET("/moisture/")
     fun getMoisture() : Call<Moisture>
 
-    @GET("/temperature")
+    @GET("/temperature/")
     fun getTemperature() : Call<Temperature>
 
-    @GET("/growth")
+    @GET("/growth/")
     fun getGrowth() : Call<Growth>
 
-    @GET("/fan")
-    fun getFanStatus() : Call<Integer> // change this in to class later
+    @GET("/fan/")
+    fun getFanStatus() : Call<Light> // change this in to fan class later or change class name to something else
 
     @FormUrlEncoded
-    @POST("/fan")
-    fun setFanStatus(@Field("state") state: String) : Call<Integer>
+    @POST("/fan/")
+    fun setFanStatus(@Field("state") state: String) : Call<Light>
 
     @FormUrlEncoded
-    @POST("/water")
+    @POST("/water/")
     fun water(@Field("size") size: String) : Call<Moisture> // maybe change this to just receive that it is success
 
+    @GET("/status/")
+    fun getAllStatus() : Call<PiStatus>
 }
 
 object PiApi {

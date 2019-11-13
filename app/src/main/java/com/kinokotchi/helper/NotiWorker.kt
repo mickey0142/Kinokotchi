@@ -32,7 +32,7 @@ class NotiWorker(appContext: Context, workerParams: WorkerParameters)
 
         if (sharedPreference?.getString("connectionURL", "") != "") {
             if (sharedPreference?.getString("mushroomName", "") != "") {
-                PiApi.retrofitService.getGreenStatus().enqueue(object: Callback<PiStatus> {
+                PiApi.retrofitService.getAllStatus().enqueue(object: Callback<PiStatus> {
                     override fun onFailure(call: Call<PiStatus>, t: Throwable) {
                         Log.i("noti", "failure : " + t.message)
                         getStatusSuccess = false
@@ -45,6 +45,7 @@ class NotiWorker(appContext: Context, workerParams: WorkerParameters)
                         Log.i("noti", "success : " + response.body() + " code : " + response.code())
                         getStatusSuccess = true
                         piStatus = response.body()
+                        val notiText = "is doing well"
 
                         if (getStatusSuccess && piStatus != null) {
                             Log.i("noti", "get status success")
@@ -54,7 +55,7 @@ class NotiWorker(appContext: Context, workerParams: WorkerParameters)
                             var build = NotificationCompat.Builder(applicationContext, "0")
                                 .setSmallIcon(R.drawable.ic_alert)
                                 .setContentTitle("your mushroom")
-                                .setContentText(piStatus?.green.toString())
+                                .setContentText(notiText)
                                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                                 .setAutoCancel(true)
                                 .setContentIntent(pendingIntent)

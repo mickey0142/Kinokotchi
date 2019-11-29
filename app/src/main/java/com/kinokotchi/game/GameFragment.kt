@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -71,14 +72,37 @@ class GameFragment : Fragment() {
         })
 
         viewModel.moisture.observe(this, Observer {moisture ->
-            val width: Double = moisture / 100.0 * binding.gameHungerBox.layoutParams.width
-            binding.gameHungerBar.layoutParams.width = width.toInt()
+            var width: Float = moisture / 100.0f
+            if (width == 1.0f) {
+                width = 0.999f
+            }
+            val param = binding.gameHungerBar.layoutParams as ConstraintLayout.LayoutParams
+            param.matchConstraintPercentWidth = width
+            binding.gameHungerBar.layoutParams = param
             if (moisture <= 20) {
                 binding.gameHungerBar.setBackgroundColor(Color.RED)
             } else if (moisture <= 50) {
                 binding.gameHungerBar.setBackgroundColor(Color.YELLOW)
             } else {
                 binding.gameHungerBar.setBackgroundColor(Color.GREEN)
+            }
+        })
+
+        viewModel.sleepiness.observe(this, Observer { sleepiness ->
+            Log.i("game", "sleepiness is : " + sleepiness)
+            var width: Float = sleepiness / 100.0f
+            if (width == 1.0f) {
+                width = 0.999f
+            }
+            val param = binding.gameSleepinessBar.layoutParams as ConstraintLayout.LayoutParams
+            param.matchConstraintPercentWidth = width
+            binding.gameSleepinessBar.layoutParams = param
+            if (sleepiness <= 20) {
+                binding.gameSleepinessBar.setBackgroundColor(Color.RED)
+            } else if (sleepiness <= 50) {
+                binding.gameSleepinessBar.setBackgroundColor(Color.YELLOW)
+            } else {
+                binding.gameSleepinessBar.setBackgroundColor(Color.GREEN)
             }
         })
 
@@ -101,8 +125,6 @@ class GameFragment : Fragment() {
                 binding.gameAlertFoodLow.visibility = View.GONE
             }
         })
-
-        // observe sleepiness here too
 
         binding.gameFeedButton.setOnClickListener {
             if (binding.gameFoodSelection.visibility == View.GONE) {
@@ -135,7 +157,6 @@ class GameFragment : Fragment() {
             viewModel.changeFood(1)
         }
 
-        // change eating animation too
         viewModel.foodChoice.observe(this, Observer { foodChoice ->
             if (foodChoice == 1) {
                 binding.gameFoodName.text = getString(R.string.size_small)

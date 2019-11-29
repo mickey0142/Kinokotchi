@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.work.*
 import com.kinokotchi.helper.NotiWorker
+import com.kinokotchi.helper.SleepinessWorker
 import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
@@ -50,5 +51,10 @@ class MainActivity : AppCompatActivity() {
         WorkManager.getInstance(this)
             .enqueueUniquePeriodicWork("noti", ExistingPeriodicWorkPolicy.REPLACE, notiRequest)
         WorkManager.getInstance(this).cancelAllWork()
+        val sleepinessCalculate = PeriodicWorkRequestBuilder<SleepinessWorker>(15, TimeUnit.MINUTES)
+            .build()
+        WorkManager.getInstance(this)
+            .enqueueUniquePeriodicWork("sleepiness", ExistingPeriodicWorkPolicy.KEEP, sleepinessCalculate)
+
     }
 }

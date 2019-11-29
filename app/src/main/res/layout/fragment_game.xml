@@ -219,18 +219,19 @@
                 android:padding="8dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/game_sleepiness_icon"
                 app:layout_constraintTop_toBottomOf="@+id/game_hunger_box">
 
                 <ImageView
                     android:id="@+id/game_sleepiness_bar"
-                    android:layout_width="48dp"
+                    android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:background="@android:color/holo_green_light"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintWidth_percent="0.999" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -260,8 +261,8 @@
 
             <ImageView
                 android:id="@+id/game_hunger_icon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:layout_marginStart="24dp"
                 app:layout_constraintBottom_toBottomOf="@+id/game_hunger_box"
                 app:layout_constraintStart_toStartOf="parent"
@@ -270,8 +271,8 @@
 
             <ImageView
                 android:id="@+id/game_sleepiness_icon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:layout_marginStart="24dp"
                 app:layout_constraintBottom_toBottomOf="@+id/game_sleepiness_box"
                 app:layout_constraintStart_toStartOf="parent"

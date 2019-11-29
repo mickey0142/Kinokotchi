@@ -69,6 +69,10 @@ class GameViewModel : ViewModel() {
     val feedSuccess: LiveData<Boolean>
         get() = _feedSuccess
 
+    private val _sleepiness = MutableLiveData<Int>()
+    val sleepiness: LiveData<Int>
+        get() = _sleepiness
+
     fun setupAPIUrl(sharePref: SharedPreferences?) {
         if (sharePref != null)
         {
@@ -124,6 +128,7 @@ class GameViewModel : ViewModel() {
                 }
             }
         })
+        _sleepiness.value = sharedPref.getInt("sleepiness", -1)
     }
 
     fun setIsConnect(isConnect: Boolean) {
@@ -160,6 +165,7 @@ class GameViewModel : ViewModel() {
                 }
             }
         })
+        _sleepiness.value = sharePref?.getInt("sleepiness", -1)
     }
 
     fun toggleFan(sharePref: SharedPreferences?) {
@@ -252,9 +258,6 @@ class GameViewModel : ViewModel() {
         _foodLevel.value = sharePref?.getBoolean("foodLevel", false)
         _temperature.value = sharePref?.getFloat("temperature", -1.0F)
         _growth.value = sharePref?.getInt("growth", -1)
-    }
-
-    fun resetFeedSuccess() {
-        _feedSuccess.value = false
+        _sleepiness.value = sharePref?.getInt("sleepiness", -1)
     }
 }

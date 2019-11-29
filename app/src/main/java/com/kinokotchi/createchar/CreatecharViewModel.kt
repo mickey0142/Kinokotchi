@@ -36,7 +36,9 @@ class CreatecharViewModel : ViewModel() {
 
         if (sharedPref != null)
         {
-            sharedPref.edit().putString("mushroomName", name).commit()
+            sharedPref.edit().putString("mushroomName", name)
+                .putInt("sleepiness", 100)
+                .commit()
             _navigateToGame.value = true
         } else {
             Log.i("createchar", "sharedPreferences is null")

@@ -106,7 +106,7 @@
                 android:layout_width="250dp"
                 android:layout_height="200dp"
                 android:background="@drawable/popup_box_9"
-                android:visibility="visible"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -155,17 +155,18 @@
                     android:id="@+id/game_food_icon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
                     app:layout_constraintBottom_toTopOf="@+id/game_food_name"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.32999998"
+                    app:layout_constraintVertical_bias="0.26"
                     app:layout_constraintVertical_chainStyle="packed"
                     app:srcCompat="@drawable/cola" />
 
                 <TextView
-                    android:id="@+id/game_food_name"
+                    android:id="@+id/game_food_size"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/size_small"
@@ -173,7 +174,29 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/game_food_name" />
+
+                <TextView
+                    android:id="@+id/game_food_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:text="@string/cola"
+                    app:layout_constraintBottom_toTopOf="@+id/game_food_size"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/game_food_icon" />
+
+                <pl.droidsonroids.gif.GifImageView
+                    android:id="@+id/game_feed_progressbar"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginTop="24dp"
+                    android:src="@drawable/progressbar"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/game_food_size" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -336,6 +359,25 @@
             app:layout_constraintHorizontal_bias="0.49"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/game_top_panel" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/game_eating_animation_panel"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/holo_orange_dark"
+            android:visibility="gone">
+
+            <pl.droidsonroids.gif.GifImageView
+                android:id="@+id/game_eating_pict"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/apple_anim"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

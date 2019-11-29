@@ -65,6 +65,10 @@ class GameViewModel : ViewModel() {
     val feedCompleted: LiveData<Boolean>
         get() = _feedCompleted
 
+    private val _feedSuccess = MutableLiveData<Boolean>()
+    val feedSuccess: LiveData<Boolean>
+        get() = _feedSuccess
+
     fun setupAPIUrl(sharePref: SharedPreferences?) {
         if (sharePref != null)
         {
@@ -192,6 +196,7 @@ class GameViewModel : ViewModel() {
     fun initFoodChoice() {
         _foodChoice.value = 1
         _feedCompleted.value = false
+        _feedSuccess.value = false
     }
 
     fun changeFood(direction: Int) {
@@ -225,6 +230,7 @@ class GameViewModel : ViewModel() {
             override fun onFailure(call: Call<ConnectionResponse>, t: Throwable) {
                 Log.i("game", "failure from feed : " + t.message)
                 _isConnected.value = false
+                _feedSuccess.value = true // CHANGE THIS
                 _feedCompleted.value = true
             }
 
@@ -233,6 +239,7 @@ class GameViewModel : ViewModel() {
                 response: Response<ConnectionResponse>
             ) {
                 _feedCompleted.value = true
+                _feedSuccess.value = true
                 Log.i("game", "success watering: " + response.body() + " code : " + response.code())
             }
         })
@@ -245,5 +252,9 @@ class GameViewModel : ViewModel() {
         _foodLevel.value = sharePref?.getBoolean("foodLevel", false)
         _temperature.value = sharePref?.getFloat("temperature", -1.0F)
         _growth.value = sharePref?.getInt("growth", -1)
+    }
+
+    fun resetFeedSuccess() {
+        _feedSuccess.value = false
     }
 }

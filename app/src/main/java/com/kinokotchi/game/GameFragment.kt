@@ -1,5 +1,6 @@
 package com.kinokotchi.game
 
+import android.animation.Animator
 import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
@@ -13,6 +14,8 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.kinokotchi.R
 import com.kinokotchi.databinding.FragmentGameBinding
+import java.util.*
+import kotlin.concurrent.schedule
 
 class GameFragment : Fragment() {
 
@@ -29,6 +32,8 @@ class GameFragment : Fragment() {
 
         val sharedPref =  context?.getSharedPreferences("Kinokotchi", Context.MODE_PRIVATE)
         binding.gameMushroomName.text = sharedPref?.getString("mushroomName", "no name")
+
+        var foodAnimationResource = -1
 
         binding.viewModel = viewModel
 
@@ -110,6 +115,12 @@ class GameFragment : Fragment() {
 
         binding.gameFoodYes.setOnClickListener {
             viewModel.feed()
+            binding.gameFeedProgressbar.visibility = View.VISIBLE
+            binding.gameFoodYes.visibility = View.GONE
+            binding.gameFoodNo.visibility = View.GONE
+            binding.gameFeedButton.isEnabled = false
+            binding.gameFanButton.isEnabled = false
+            binding.gameLightButton.isEnabled = false
         }
 
         binding.gameFoodNo.setOnClickListener {
@@ -124,25 +135,83 @@ class GameFragment : Fragment() {
             viewModel.changeFood(1)
         }
 
+        // change eating animation too
         viewModel.foodChoice.observe(this, Observer { foodChoice ->
             if (foodChoice == 1) {
                 binding.gameFoodName.text = getString(R.string.size_small)
+                binding.gameFoodIcon.setImageResource(R.drawable.water)
+                foodAnimationResource = R.drawable.water_anim
             } else if (foodChoice == 2) {
                 binding.gameFoodName.text = getString(R.string.size_small)
+                binding.gameFoodIcon.setImageResource(R.drawable.cola)
+                foodAnimationResource = R.drawable.cola_anim
             } else if (foodChoice == 3) {
                 binding.gameFoodName.text = getString(R.string.size_medium)
+                binding.gameFoodIcon.setImageResource(R.drawable.apple)
+                foodAnimationResource = R.drawable.apple_anim
             } else if (foodChoice == 4) {
                 binding.gameFoodName.text = getString(R.string.size_medium)
+                binding.gameFoodIcon.setImageResource(R.drawable.melon)
+                foodAnimationResource = R.drawable.melon_anim
             } else if (foodChoice == 5) {
                 binding.gameFoodName.text = getString(R.string.size_large)
+                binding.gameFoodIcon.setImageResource(R.drawable.burger)
+                foodAnimationResource = R.drawable.burger_anim
             } else if (foodChoice == 6) {
                 binding.gameFoodName.text = getString(R.string.size_large)
+                binding.gameFoodIcon.setImageResource(R.drawable.rice)
+                foodAnimationResource = R.drawable.rice_anim
             }
         })
 
         viewModel.feedCompleted.observe(this, Observer {feedCompleted ->
             if (feedCompleted) {
                 binding.gameFoodSelection.visibility = View.GONE
+                binding.gameFeedProgressbar.visibility = View.GONE
+                binding.gameFoodYes.visibility = View.VISIBLE
+                binding.gameFoodNo.visibility = View.VISIBLE
+                binding.gameFeedButton.isEnabled = true
+                binding.gameFanButton.isEnabled = true
+                binding.gameLightButton.isEnabled = true
+                if (viewModel.feedSuccess.value!!) {
+                    binding.gameEatingPict.setImageResource(foodAnimationResource)
+                    binding.gameEatingAnimationPanel.animate().setStartDelay(0)
+                        .alpha(1.0f).setDuration(1)
+                        .setListener(object: Animator.AnimatorListener{
+                            override fun onAnimationRepeat(animation: Animator?) {
+
+                            }
+
+                            override fun onAnimationEnd(animation: Animator?) {
+                                binding.gameEatingAnimationPanel.animate()
+                                    .setStartDelay(1900)
+                                    .alpha(0.0f).setDuration(1)
+                                    .setListener(object: Animator.AnimatorListener {
+                                        override fun onAnimationRepeat(animation: Animator?) {
+
+                                        }
+
+                                        override fun onAnimationEnd(animation: Animator?) {
+                                            binding.gameEatingAnimationPanel.visibility = View.GONE
+                                        }
+
+                                        override fun onAnimationCancel(animation: Animator?) {
+
+                                        }
+
+                                        override fun onAnimationStart(animation: Animator?) {
+                                        }
+                                    }).start()
+                            }
+
+                            override fun onAnimationCancel(animation: Animator?) {
+                            }
+
+                            override fun onAnimationStart(animation: Animator?) {
+                                binding.gameEatingAnimationPanel.visibility = View.VISIBLE
+                            }
+                        }).start()
+                }
             }
         })
 

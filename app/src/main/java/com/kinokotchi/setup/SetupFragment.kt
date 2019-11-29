@@ -34,7 +34,7 @@ class SetupFragment : Fragment() {
         ViewModelProviders.of(this).get(SetupViewModel::class.java)
     }
 
-    var sharedPreference: SharedPreferences? = null
+    var sharedPref: SharedPreferences? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -43,7 +43,7 @@ class SetupFragment : Fragment() {
         val binding: FragmentSetupBinding = DataBindingUtil.inflate(
             inflater, R.layout.fragment_setup, container, false)
 
-        sharedPreference = context?.getSharedPreferences("Kinokotchi", Context.MODE_PRIVATE)
+        sharedPref = context?.getSharedPreferences("Kinokotchi", Context.MODE_PRIVATE)
 
         binding.viewModel = viewModel
 
@@ -64,13 +64,13 @@ class SetupFragment : Fragment() {
             }
         })
 
-        if (sharedPreference?.getString("connectionURL", "") != "") {
+        if (sharedPref?.getString("connectionURL", "") != "") {
             findNavController().navigate(SetupFragmentDirections.actionSetupFragmentToCreatecharFragment())
             Log.i("setup", "connectionURL is not empty - go to createchar fragment")
         }
 
         binding.setupConnectButton.setOnClickListener {
-            viewModel.confirmClicked(binding.setupConnectionUrl.text.toString(), sharedPreference,
+            viewModel.confirmClicked(binding.setupConnectionUrl.text.toString(), sharedPref,
                 binding, inflater)
         }
 

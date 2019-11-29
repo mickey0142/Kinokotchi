@@ -15,6 +15,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.PopupWindow
+import android.widget.TextView
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationCompat.DEFAULT_SOUND
 import androidx.core.app.NotificationCompat.DEFAULT_VIBRATE
@@ -49,10 +50,9 @@ class LoadingFragment : Fragment() {
         val binding: FragmentLoadingBinding = DataBindingUtil.inflate(
             inflater, R.layout.fragment_loading, container, false)
 
-        val sharedPreference =  context?.getSharedPreferences("Kinokotchi", Context.MODE_PRIVATE)
-
-        if (sharedPreference != null) {
-            sharedPreference.edit().putBoolean("connected", false).commit()
+        val sharedPref =  context?.getSharedPreferences("Kinokotchi", Context.MODE_PRIVATE)
+        if (sharedPref != null) {
+            sharedPref.edit().putBoolean("connected", false).commit()
             Log.i("loading", "set connected to false")
         } else {
             Log.i("loading", "sharedPreference is null")
@@ -86,37 +86,44 @@ class LoadingFragment : Fragment() {
 //        }
 
         // refactor by moving all this to viewmodel later
-        val connectionUrl = sharedPreference?.getString("connectionURL", "")
+        val connectionUrl = sharedPref?.getString("connectionURL", "")
         if (connectionUrl != "") {
             // maybe setup url for PiApi here from sharepref first
             if (connectionUrl != null) PiApi.setupURL(connectionUrl)
-            if (sharedPreference?.getString("mushroomName", "") != "") {
+            if (sharedPref?.getString("mushroomName", "") != "") {
                 // get request before go to game fragment
                 PiApi.retrofitService.getAllStatus().enqueue(object: Callback<PiStatus> {
                     override fun onFailure(call: Call<PiStatus>, t: Throwable) {
                         Log.i("loading", "failure : " + t.message)
                         // go to game fragment without connection
-                        sharedPreference!!.edit().putBoolean("connected", false).commit()
-                        showPopup(binding, inflater)
+                        sharedPref!!.edit().putBoolean("connected", false).commit()
+                        showPopup(binding, inflater, "Please check Internet Connection on your phone and box")
                         Log.i("loading", "go to game fragment - can't connect")
                     }
 
                     override fun onResponse(call: Call<PiStatus>, response: Response<PiStatus>) {
                         Log.i("loading", "success : " + response.body() + " code : " + response.code())
 
-                        Log.i("loading", "sharepref = " + sharedPreference)
-                        if (sharedPreference != null)
+                        Log.i("loading", "sharepref = " + sharedPref)
+                        if (sharedPref != null)
                         {
-                            // go to game normally with connection
-                            sharedPreference.edit().putBoolean("connected", true)
-                                .putInt("lightStatus", response.body()?.light!!)
-                                .putInt("fanStatus", response.body()?.fan!!)
-                                .putFloat("moisture", response.body()?.moisture!!.toFloat())
-                                .putFloat("temperature", response.body()?.temperature!!.toFloat())
-                                .putInt("growth", response.body()?.growth!!)
-                                .commit()
-                            Log.i("loading", "go to game fragment - connected")
-                            findNavController().navigate(LoadingFragmentDirections.actionLoadingFragmentToGameFragment())
+                            if (response.code() == 200) {
+                                // go to game normally with connection
+                                sharedPref.edit().putBoolean("connected", true)
+                                    .putInt("lightStatus", response.body()?.light!!)
+                                    .putInt("fanStatus", response.body()?.fan!!)
+                                    .putFloat("moisture", response.body()?.moisture!!.toFloat())
+                                    .putBoolean("foodLevel", response.body()?.foodLevel!!)
+                                    .putFloat("temperature", response.body()?.temperature!!.toFloat())
+                                    .putInt("growth", response.body()?.growth!!)
+                                    .commit()
+                                Log.i("loading", "go to game fragment - connected")
+                                findNavController().navigate(LoadingFragmentDirections.actionLoadingFragmentToGameFragment())
+                            } else {
+                                sharedPref!!.edit().putBoolean("connected", false).commit()
+                                showPopup(binding, inflater, "response code : ${response.code()}")
+                                Log.i("loading", "go to game fragment - can't connect")
+                            }
                         } else {
                             Log.i("loading", "sharedPreferences is null")
                         }
@@ -137,8 +144,10 @@ class LoadingFragment : Fragment() {
         return binding.root
     }
 
-    private fun showPopup(binding: FragmentLoadingBinding, inflater: LayoutInflater){
+    private fun showPopup(binding: FragmentLoadingBinding, inflater: LayoutInflater, errorText: String){
         val view = inflater.inflate(R.layout.popup_loading,null)
+
+        view.findViewById<TextView>(R.id.popup_loading_error_text).text = errorText
 
         val popupWindow = PopupWindow(
             view, // Custom view to show in popup window

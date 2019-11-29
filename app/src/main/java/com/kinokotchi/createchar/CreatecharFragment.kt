@@ -30,8 +30,8 @@ class CreatecharFragment : Fragment() {
 
         binding.viewModel = viewModel
 
-        val sharedPreference =  context?.getSharedPreferences("Kinokotchi", Context.MODE_PRIVATE)
-        binding.textView.text = sharedPreference?.getString("connectionURL", "no connection url !")
+        val sharedPref =  context?.getSharedPreferences("Kinokotchi", Context.MODE_PRIVATE)
+        binding.textView.text = sharedPref?.getString("connectionURL", "no connection url !")
 
         binding.setLifecycleOwner(this)
 
@@ -42,13 +42,13 @@ class CreatecharFragment : Fragment() {
             }
         })
 
-        if (sharedPreference?.getString("mushroomName", "") != "") {
+        if (sharedPref?.getString("mushroomName", "") != "") {
             findNavController().navigate(CreatecharFragmentDirections.actionCreatecharFragmentToGameFragment())
             Log.i("createchar", "connectionURL is not empty - go to game fragment")
         }
 
         binding.createcharCreateButton.setOnClickListener {
-            viewModel.confirmClicked(binding.createcharName.text.toString(), sharedPreference)
+            viewModel.confirmClicked(binding.createcharName.text.toString(), sharedPref)
         }
 
         return binding.root

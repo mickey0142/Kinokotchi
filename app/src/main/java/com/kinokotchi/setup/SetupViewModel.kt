@@ -54,7 +54,7 @@ class SetupViewModel : ViewModel() {
         _navigateToCreateChar.value = false
     }
 
-    fun confirmClicked(url: String, sharedPreferences: SharedPreferences?,
+    fun confirmClicked(url: String, sharedPref: SharedPreferences?,
                        binding: FragmentSetupBinding, inflater: LayoutInflater) {
         // send api request to raspberry pi to check for response before changing this to true and
         // add url to sharedPreferences
@@ -77,11 +77,11 @@ class SetupViewModel : ViewModel() {
                     Log.i("setup", "success : " + response.body() + " code : " + response.code())
                     _loading.value = false
 
-                    Log.i("setup", "in confirmClicked : sharepref = " + sharedPreferences)
-                    if (sharedPreferences != null)
+                    Log.i("setup", "in confirmClicked : sharepref = " + sharedPref)
+                    if (sharedPref != null)
                     {
-                        sharedPreferences.edit().putBoolean("connected", true).commit()
-                        sharedPreferences.edit().putString("connectionURL", url).commit()
+                        sharedPref.edit().putBoolean("connected", true).commit()
+                        sharedPref.edit().putString("connectionURL", url).commit()
                         _navigateToCreateChar.value = true
                     } else {
                         Log.i("setup", "sharedPreferences is null")

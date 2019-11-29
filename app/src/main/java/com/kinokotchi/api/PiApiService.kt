@@ -34,10 +34,13 @@ interface PiApiService {
 
     @FormUrlEncoded
     @POST("/light/")
-    fun setLightStatus(@Field("state") state: String) : Call<Light>
+    fun setLightStatus(@Field("state") state: Int) : Call<Light>
 
     @GET("/moisture/")
     fun getMoisture() : Call<Moisture>
+
+    @GET("/foodLevel/")
+    fun getFoodLevel() : Call<FoodLevel>
 
     @GET("/temperature/")
     fun getTemperature() : Call<Temperature>
@@ -50,11 +53,11 @@ interface PiApiService {
 
     @FormUrlEncoded
     @POST("/fan/")
-    fun setFanStatus(@Field("state") state: String) : Call<Light>
+    fun setFanStatus(@Field("state") state: Int) : Call<Light>
 
     @FormUrlEncoded
     @POST("/water/")
-    fun water(@Field("size") size: String) : Call<Moisture> // maybe change this to just receive that it is success
+    fun water(@Field("size") size: String) : Call<ConnectionResponse> // maybe change this to just receive that it is success
 
     @GET("/status/")
     fun getAllStatus() : Call<PiStatus>

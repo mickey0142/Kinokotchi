@@ -31,12 +31,12 @@ class CreatecharViewModel : ViewModel() {
         _navigateToGame.value = false
     }
 
-    fun confirmClicked(name: String, sharedPreferences: SharedPreferences?) {
+    fun confirmClicked(name: String, sharedPref: SharedPreferences?) {
         // check for various things to make sure that everything is ready before going to game fragment
 
-        if (sharedPreferences != null)
+        if (sharedPref != null)
         {
-            sharedPreferences.edit().putString("mushroomName", name).commit()
+            sharedPref.edit().putString("mushroomName", name).commit()
             _navigateToGame.value = true
         } else {
             Log.i("createchar", "sharedPreferences is null")

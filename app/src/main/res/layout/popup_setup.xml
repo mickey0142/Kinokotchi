@@ -1,20 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/popup_box_9"
+    android:orientation="vertical"
+    android:padding="24dp">
 
     <TextView
         android:id="@+id/popup_setup_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="can't connect to box try again later"
-        android:layout_gravity="center"/>
+        android:layout_gravity="center"
+        android:text="can't connect to box try again later" />
 
     <Button
         android:id="@+id/popup_setup_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="close"
-        android:layout_gravity="center"/>
+        android:layout_gravity="center"
+        android:background="@drawable/long_button_background_selector"
+        android:text="close" />
 
 </LinearLayout>

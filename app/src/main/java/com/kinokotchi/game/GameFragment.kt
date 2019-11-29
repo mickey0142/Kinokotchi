@@ -27,37 +27,38 @@ class GameFragment : Fragment() {
         val binding: FragmentGameBinding = DataBindingUtil.inflate(
             inflater, R.layout.fragment_game, container, false)
 
-        val sharedPreference =  context?.getSharedPreferences("Kinokotchi", Context.MODE_PRIVATE)
-        binding.gameMushroomName.text = sharedPreference?.getString("mushroomName", "no name")
+        val sharedPref =  context?.getSharedPreferences("Kinokotchi", Context.MODE_PRIVATE)
+        binding.gameMushroomName.text = sharedPref?.getString("mushroomName", "no name")
 
         binding.viewModel = viewModel
 
-        viewModel.initValue(sharedPreference)
+        viewModel.initValue(sharedPref)
 
         // app crash when trying to use piapi which will cause app to create object piapi which will
         // trying to create retrofitservice from invalid url which will make app crash
 //        viewModel.setupAPIUrl(sharedPreference)
 
         binding.gameReconnectButton.setOnClickListener {
-            viewModel.reconnect(sharedPreference!!, binding.gameReconnectProgress, binding.gameReconnectButton)
+            viewModel.reconnect(sharedPref!!, binding.gameReconnectProgress, binding.gameReconnectButton)
             binding.gameReconnectProgress.visibility = View.VISIBLE
         }
 
         binding.gameLightButton.setOnClickListener {
 //            binding.gameMiddlePanel.setBackgroundResource(R.drawable.box)
-            viewModel.toggleLight(sharedPreference)
+            viewModel.toggleLight(sharedPref)
         }
 
+        // set background here
         viewModel.lightStatus.observe(this, Observer { lightStatus ->
-            if (lightStatus.equals("1")) {
-                binding.gameMiddlePanel.setBackgroundColor(Color.YELLOW)
+            if (lightStatus == 1) {
+                binding.gameBackground.setBackgroundColor(Color.YELLOW)
             } else {
-                binding.gameMiddlePanel.setBackgroundColor(Color.BLUE)
+                binding.gameBackground.setBackgroundColor(Color.BLUE)
             }
         })
 
         binding.gameFanButton.setOnClickListener {
-            viewModel.toggleFan(sharedPreference)
+            viewModel.toggleFan(sharedPref)
         }
 
         viewModel.fanStatus.observe(this, Observer { fanStatus ->
@@ -65,29 +66,34 @@ class GameFragment : Fragment() {
         })
 
         viewModel.moisture.observe(this, Observer {moisture ->
-            // if i don't forget... calculate moisture in raspi and return moisture as a percentage
-            // to be use here easily
-            val height: Double = moisture / 100.0 * binding.gameMoistureBox.layoutParams.height
-            Log.i("game", "height is : " + height + " moisture is : " + moisture)
-            binding.gameMoistureLevel.layoutParams.height = height.toInt()
+            val width: Double = moisture / 100.0 * binding.gameHungerBox.layoutParams.width
+            binding.gameHungerBar.layoutParams.width = width.toInt()
             if (moisture <= 20) {
-                binding.gameMoistureLevel.setBackgroundColor(Color.RED)
+                binding.gameHungerBar.setBackgroundColor(Color.RED)
             } else if (moisture <= 50) {
-                binding.gameMoistureLevel.setBackgroundColor(Color.YELLOW)
+                binding.gameHungerBar.setBackgroundColor(Color.YELLOW)
             } else {
-                binding.gameMoistureLevel.setBackgroundColor(Color.GREEN)
+                binding.gameHungerBar.setBackgroundColor(Color.GREEN)
             }
         })
 
         viewModel.temperature.observe(this, Observer {temperature ->
-            val height: Double = temperature / 100.0 * binding.gameTemperatureBox.layoutParams.height
-            binding.gameTemperatureLevel.layoutParams.height = height.toInt()
-            if (temperature <= 20) {
-                binding.gameTemperatureLevel.setBackgroundColor(Color.RED)
-            } else if (temperature <= 50) {
-                binding.gameTemperatureLevel.setBackgroundColor(Color.YELLOW)
+            if (temperature <= 22) {
+                binding.gameAlertTemperature.setImageResource(R.drawable.alert_too_cold)
+                binding.gameAlertTemperature.visibility = View.VISIBLE
+            } else if (temperature >= 28) {
+                binding.gameAlertTemperature.setImageResource(R.drawable.alert_too_hot)
+                binding.gameAlertTemperature.visibility = View.VISIBLE
             } else {
-                binding.gameTemperatureLevel.setBackgroundColor(Color.GREEN)
+                binding.gameAlertTemperature.visibility = View.GONE
+            }
+        })
+
+        viewModel.foodLevel.observe(this, Observer {foodLevel ->
+            if (foodLevel) {
+                binding.gameAlertFoodLow.visibility = View.VISIBLE
+            } else {
+                binding.gameAlertFoodLow.visibility = View.GONE
             }
         })
 
@@ -122,9 +128,21 @@ class GameFragment : Fragment() {
             if (foodChoice == 1) {
                 binding.gameFoodName.text = getString(R.string.size_small)
             } else if (foodChoice == 2) {
-                binding.gameFoodName.text = getString(R.string.size_medium)
+                binding.gameFoodName.text = getString(R.string.size_small)
             } else if (foodChoice == 3) {
+                binding.gameFoodName.text = getString(R.string.size_medium)
+            } else if (foodChoice == 4) {
+                binding.gameFoodName.text = getString(R.string.size_medium)
+            } else if (foodChoice == 5) {
                 binding.gameFoodName.text = getString(R.string.size_large)
+            } else if (foodChoice == 6) {
+                binding.gameFoodName.text = getString(R.string.size_large)
+            }
+        })
+
+        viewModel.feedCompleted.observe(this, Observer {feedCompleted ->
+            if (feedCompleted) {
+                binding.gameFoodSelection.visibility = View.GONE
             }
         })
 
@@ -149,13 +167,13 @@ class GameFragment : Fragment() {
         // add variable in viewmodel to keep status data observe it here
         // then call and create function in viewmodel to change color in viewmodel sending imageview to be set in function argument
         // in that function set color according to status level
-        binding.gameTemperatureLevel.setBackgroundColor(Color.RED)
-        binding.gameMoistureLevel.setBackgroundColor(Color.YELLOW)
-        binding.gameSleepinessLevel.setBackgroundColor(Color.GREEN)
+//        binding.gameTemperatureLevel.setBackgroundColor(Color.RED)
+//        binding.gameMoistureLevel.setBackgroundColor(Color.YELLOW)
+//        binding.gameSleepinessLevel.setBackgroundColor(Color.GREEN)
 
         binding.setLifecycleOwner(this)
 
-        viewModel.setIsConnect(sharedPreference!!.getBoolean("connected", false))
+        viewModel.setIsConnect(sharedPref!!.getBoolean("connected", false))
 
         return binding.root
     }

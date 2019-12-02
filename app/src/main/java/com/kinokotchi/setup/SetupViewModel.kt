@@ -45,6 +45,10 @@ class SetupViewModel : ViewModel() {
     val loading: LiveData<Boolean>
         get() = _loading
 
+    private val _isCompleted = MutableLiveData<String>()
+    val isCompleted: LiveData<String>
+        get() = _isCompleted
+
     init {
         _navigateToCreateChar.value = false
         _loading.value = false
@@ -140,5 +144,17 @@ class SetupViewModel : ViewModel() {
             0, // X offset
             0 // Y offset
         )
+    }
+
+    fun setIsComplete(status: String) {
+        _isCompleted.value = status
+    }
+
+    fun getIsComplete(): String {
+        if (_isCompleted.value != null) {
+            return _isCompleted.value!!
+        } else {
+            return ""
+        }
     }
 }

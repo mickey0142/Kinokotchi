@@ -14,6 +14,10 @@ class CreatecharViewModel : ViewModel() {
     private var viewModelJob = Job()
     private val coroutineScope = CoroutineScope(viewModelJob + Dispatchers.Main)
 
+    private val _isCompleted = MutableLiveData<String>()
+    val isCompleted: LiveData<String>
+        get() = _isCompleted
+
     override fun onCleared() {
         super.onCleared()
         viewModelJob.cancel()
@@ -34,7 +38,7 @@ class CreatecharViewModel : ViewModel() {
     fun confirmClicked(name: String, sharedPref: SharedPreferences?) {
         // check for various things to make sure that everything is ready before going to game fragment
 
-        if (sharedPref != null)
+        if (sharedPref != null && name != "")
         {
             sharedPref.edit().putString("mushroomName", name)
                 .putInt("sleepiness", 100)
@@ -42,6 +46,18 @@ class CreatecharViewModel : ViewModel() {
             _navigateToGame.value = true
         } else {
             Log.i("createchar", "sharedPreferences is null")
+        }
+    }
+
+    fun setIsComplete(status: String) {
+        _isCompleted.value = status
+    }
+
+    fun getIsComplete(): String {
+        if (_isCompleted.value != null) {
+            return _isCompleted.value!!
+        } else {
+            return ""
         }
     }
 }

@@ -251,12 +251,13 @@
 
                 <ImageView
                     android:id="@+id/game_hunger_bar"
-                    android:layout_width="24dp"
+                    android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:background="@android:color/holo_orange_light"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintWidth_percent="0.5" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <ImageView

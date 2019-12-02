@@ -28,10 +28,13 @@ class NotiWorker(appContext: Context, workerParams: WorkerParameters)
 
         var getStatusSuccess = false
 
-        var piStatus: PiStatus? = null
+        var piStatus: PiStatus?
+
+        val mushroomName = sharedPreference?.getString("mushroomName", "")
+        val sleepiness = sharedPreference?.getInt("sleepiness", -1)
 
         if (sharedPreference?.getString("connectionURL", "") != "") {
-            if (sharedPreference?.getString("mushroomName", "") != "") {
+            if (mushroomName != "") {
                 PiApi.retrofitService.getAllStatus().enqueue(object: Callback<PiStatus> {
                     override fun onFailure(call: Call<PiStatus>, t: Throwable) {
                         Log.i("noti", "failure : " + t.message)
@@ -45,27 +48,51 @@ class NotiWorker(appContext: Context, workerParams: WorkerParameters)
                         Log.i("noti", "success : " + response.body() + " code : " + response.code())
                         getStatusSuccess = true
                         piStatus = response.body()
-                        val notiText = "is doing well"
+                        var notiText = ""
 
-                        if (getStatusSuccess && piStatus != null) {
-                            Log.i("noti", "get status success")
-
-                            val pendingIntent: PendingIntent = PendingIntent.getActivity(applicationContext, 0, intent, 0)
-
-                            var build = NotificationCompat.Builder(applicationContext, "0")
-                                .setSmallIcon(R.drawable.ic_alert)
-                                .setContentTitle("your mushroom")
-                                .setContentText(notiText)
-                                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                                .setAutoCancel(true)
-                                .setContentIntent(pendingIntent)
-                                .setDefaults(NotificationCompat.DEFAULT_VIBRATE or NotificationCompat.DEFAULT_SOUND)
-
-                            with(NotificationManagerCompat.from(applicationContext)){
-                                notify(0, build.build())
+                        if (response.code() == 200) {
+                            if (piStatus?.isFoodLow!!) {
+                                notiText += "My food is running out!\n"
                             }
-                        } else {
-                            Log.i("noti", "get status failed")
+                            if (sleepiness != null) {
+                                if (sleepiness <= 20 && piStatus?.light == 1) {
+                                    notiText += "I'm sleepy...\n"
+                                } else if (sleepiness >= 100 && piStatus?.light == 0) {
+                                    notiText += "I'm awake!\n"
+                                }
+                            }
+                            if (piStatus?.moisture!! <= 20) {
+                                notiText += "I'm hungry!\n"
+                            }
+                            if (piStatus?.temperature!! <= 22) {
+                                notiText += "I'm freezing!\n"
+                            }
+                            if (piStatus?.temperature!! >= 28) {
+                                notiText += "I'm hot!\n"
+                            }
+
+                            if (getStatusSuccess && piStatus != null && notiText != "") {
+                                Log.i("noti", "get status success")
+
+                                val pendingIntent: PendingIntent = PendingIntent.getActivity(applicationContext, 0, intent, 0)
+
+                                var build = NotificationCompat.Builder(applicationContext, "0")
+                                    .setSmallIcon(R.drawable.ic_alert)
+                                    .setContentTitle(mushroomName)
+                                    .setContentText(notiText)
+                                    .setPriority(NotificationCompat.PRIORITY_HIGH)
+                                    .setAutoCancel(true)
+                                    .setContentIntent(pendingIntent)
+                                    .setDefaults(NotificationCompat.DEFAULT_VIBRATE or NotificationCompat.DEFAULT_SOUND)
+//                                    .setStyle(NotificationCompat.BigTextStyle()
+//                                        .bigText(notiText)) // somehow this is not working
+
+                                with(NotificationManagerCompat.from(applicationContext)){
+                                    notify(0, build.build())
+                                }
+                            } else {
+                                Log.i("noti", "get status failed")
+                            }
                         }
                     }
                 })

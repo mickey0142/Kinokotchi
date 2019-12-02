@@ -45,9 +45,9 @@ class GameViewModel : ViewModel() {
     val moisture: LiveData<Float>
         get() = _moisture
 
-    private val _foodLevel = MutableLiveData<Boolean>()
-    val foodLevel: LiveData<Boolean>
-        get() = _foodLevel
+    private val _isFoodLow = MutableLiveData<Boolean>()
+    val isFoodLow: LiveData<Boolean>
+        get() = _isFoodLow
 
     private val _temperature = MutableLiveData<Float>()
     val temperature: LiveData<Float>
@@ -111,14 +111,14 @@ class GameViewModel : ViewModel() {
                         .putInt("lightStatus", response.body()?.light!!)
                         .putInt("fanStatus", response.body()?.fan!!)
                         .putFloat("moisture", response.body()?.moisture!!.toFloat())
-                        .putBoolean("foodLevel", response.body()?.foodLevel!!)
+                        .putBoolean("foodLevel", response.body()?.isFoodLow!!)
                         .putFloat("temperature", response.body()?.temperature!!.toFloat())
                         .putInt("growth", response.body()?.growth!!)
                         .commit()
                     _lightStatus.value = response.body()?.light
                     _fanStatus.value = response.body()?.fan
                     _moisture.value = response.body()?.moisture?.toFloat()
-                    _foodLevel.value = response.body()?.foodLevel
+                    _isFoodLow.value = response.body()?.isFoodLow
                     _temperature.value = response.body()?.temperature?.toFloat()
                     _growth.value = response.body()?.growth
                     sharedPref.edit().putBoolean("connected", true).commit()
@@ -236,7 +236,7 @@ class GameViewModel : ViewModel() {
             override fun onFailure(call: Call<ConnectionResponse>, t: Throwable) {
                 Log.i("game", "failure from feed : " + t.message)
                 _isConnected.value = false
-                _feedSuccess.value = true // CHANGE THIS
+                _feedSuccess.value = true // change this for debugging
                 _feedCompleted.value = true
             }
 
@@ -244,8 +244,8 @@ class GameViewModel : ViewModel() {
                 call: Call<ConnectionResponse>,
                 response: Response<ConnectionResponse>
             ) {
-                _feedCompleted.value = true
                 _feedSuccess.value = true
+                _feedCompleted.value = true
                 Log.i("game", "success watering: " + response.body() + " code : " + response.code())
             }
         })
@@ -255,7 +255,7 @@ class GameViewModel : ViewModel() {
         _lightStatus.value = sharePref?.getInt("lightStatus", 1)
         _fanStatus.value = sharePref?.getInt("fanStatus", 0)
         _moisture.value = sharePref?.getFloat("moisture", -1.0F)
-        _foodLevel.value = sharePref?.getBoolean("foodLevel", false)
+        _isFoodLow.value = sharePref?.getBoolean("isFoodLow", false)
         _temperature.value = sharePref?.getFloat("temperature", -1.0F)
         _growth.value = sharePref?.getInt("growth", -1)
         _sleepiness.value = sharePref?.getInt("sleepiness", -1)

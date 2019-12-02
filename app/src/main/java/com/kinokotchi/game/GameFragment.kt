@@ -72,6 +72,7 @@ class GameFragment : Fragment() {
         })
 
         viewModel.moisture.observe(this, Observer {moisture ->
+            Log.i("game", "moisture is : " + moisture)
             var width: Float = moisture / 100.0f
             if (width == 1.0f) {
                 width = 0.999f
@@ -118,8 +119,8 @@ class GameFragment : Fragment() {
             }
         })
 
-        viewModel.foodLevel.observe(this, Observer {foodLevel ->
-            if (foodLevel) {
+        viewModel.isFoodLow.observe(this, Observer {isFoodLow ->
+            if (isFoodLow) {
                 binding.gameAlertFoodLow.visibility = View.VISIBLE
             } else {
                 binding.gameAlertFoodLow.visibility = View.GONE

@@ -30,6 +30,7 @@ import com.kinokotchi.R
 import com.kinokotchi.api.ConnectionResponse
 import com.kinokotchi.api.PiApi
 import com.kinokotchi.api.PiStatus
+import com.kinokotchi.api.IsFoodLow
 import com.kinokotchi.databinding.FragmentLoadingBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -57,6 +58,8 @@ class LoadingFragment : Fragment() {
         } else {
             Log.i("loading", "sharedPreference is null")
         }
+
+        binding.viewModel = viewModel
 
         // ??? check internet connection don't know when should i use this
         // don't know if it work either... test it later
@@ -113,15 +116,17 @@ class LoadingFragment : Fragment() {
                                     .putInt("lightStatus", response.body()?.light!!)
                                     .putInt("fanStatus", response.body()?.fan!!)
                                     .putFloat("moisture", response.body()?.moisture!!.toFloat())
-                                    .putBoolean("foodLevel", response.body()?.foodLevel!!)
+                                    .putBoolean("isFoodLow", response.body()?.isFoodLow!!)
                                     .putFloat("temperature", response.body()?.temperature!!.toFloat())
                                     .putInt("growth", response.body()?.growth!!)
                                     .commit()
                                 Log.i("loading", "go to game fragment - connected")
+                                viewModel.setIsComplete("game")
                                 findNavController().navigate(LoadingFragmentDirections.actionLoadingFragmentToGameFragment())
                             } else {
                                 sharedPref!!.edit().putBoolean("connected", false).commit()
                                 showPopup(binding, inflater, "response code : ${response.code()}")
+                                viewModel.setIsComplete("game")
                                 Log.i("loading", "go to game fragment - can't connect")
                             }
                         } else {
@@ -131,15 +136,17 @@ class LoadingFragment : Fragment() {
                 })
             } else {
                 // go to create char fragment
+                viewModel.setIsComplete("createchar")
                 findNavController().navigate(LoadingFragmentDirections.actionLoadingFragmentToCreatecharFragment())
                 Log.i("loading", "go to createchar fragment")
             }
         } else {
+            viewModel.setIsComplete("setup")
             findNavController().navigate(LoadingFragmentDirections.actionLoadingFragmentToSetupFragment())
             Log.i("loading", "go to setup fragment")
         }
 
-        binding.viewModel = viewModel
+        binding.setLifecycleOwner(this)
 
         return binding.root
     }
@@ -184,5 +191,18 @@ class LoadingFragment : Fragment() {
             0, // X offset
             0 // Y offset
         )
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        val destination = viewModel.getIsComplete()
+        if (destination == "game") {
+            findNavController().navigate(LoadingFragmentDirections.actionLoadingFragmentToGameFragment())
+        } else if (destination == "createchar") {
+            findNavController().navigate(LoadingFragmentDirections.actionLoadingFragmentToCreatecharFragment())
+        } else if (destination == "setup") {
+            findNavController().navigate(LoadingFragmentDirections.actionLoadingFragmentToSetupFragment())
+        }
     }
 }

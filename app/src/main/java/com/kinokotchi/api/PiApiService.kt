@@ -1,11 +1,9 @@
 package com.kinokotchi.api
 
 import android.content.SharedPreferences
-import android.util.Log
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import kotlinx.coroutines.Deferred
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -39,8 +37,8 @@ interface PiApiService {
     @GET("/moisture/")
     fun getMoisture() : Call<Moisture>
 
-    @GET("/foodLevel/")
-    fun getFoodLevel() : Call<FoodLevel>
+    @GET("/isFoodLow/")
+    fun getIsFoodLow() : Call<IsFoodLow>
 
     @GET("/temperature/")
     fun getTemperature() : Call<Temperature>

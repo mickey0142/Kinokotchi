@@ -2,15 +2,24 @@ package com.kinokotchi.game
 
 import android.content.SharedPreferences
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.os.Build
+import android.transition.Slide
+import android.transition.TransitionManager
 import android.util.Log
+import android.view.Gravity
+import android.view.LayoutInflater
 import android.view.View
-import android.widget.Button
-import android.widget.ProgressBar
+import android.widget.*
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.navigation.fragment.findNavController
+import com.kinokotchi.R
 import com.kinokotchi.api.*
 import com.kinokotchi.databinding.FragmentGameBinding
+import com.kinokotchi.databinding.FragmentLoadingBinding
+import com.kinokotchi.loading.LoadingFragmentDirections
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -72,6 +81,10 @@ class GameViewModel : ViewModel() {
     private val _sleepiness = MutableLiveData<Int>()
     val sleepiness: LiveData<Int>
         get() = _sleepiness
+
+    private val _refreshing = MutableLiveData<Boolean>()
+    val refreshing: LiveData<Boolean>
+        get() = _refreshing
 
     fun setupAPIUrl(sharePref: SharedPreferences?) {
         if (sharePref != null)
@@ -135,17 +148,19 @@ class GameViewModel : ViewModel() {
         _isConnected.value = isConnect
     }
 
-    fun toggleLight(sharePref: SharedPreferences?){
+    fun toggleLight(sharePref: SharedPreferences?, progressBar: View){
         var status = 1
         if (sharePref?.getInt("lightStatus", 1) == 1) {
             status = 0
         } else {
             status = 1
         }
+        progressBar.visibility = View.VISIBLE
         PiApi.retrofitService.setLightStatus(status).enqueue(object: Callback<Light> {
             override fun onFailure(call: Call<Light>, t: Throwable) {
                 Log.i("game", "failure from toggleLight : " + t.message)
                 _isConnected.value = false
+                progressBar.visibility = View.GONE
             }
 
             override fun onResponse(
@@ -154,6 +169,7 @@ class GameViewModel : ViewModel() {
             ) {
                 Log.i("game", "success : " + response.body() + " code : " + response.code())
                 _lightStatus.value = response.body()?.state
+                progressBar.visibility = View.GONE
                 if (response.code() == 200) {
                     if (_lightStatus.value != null){
                         sharePref?.edit()?.putInt("lightStatus", _lightStatus.value!!)?.commit()
@@ -168,17 +184,19 @@ class GameViewModel : ViewModel() {
         _sleepiness.value = sharePref?.getInt("sleepiness", -1)
     }
 
-    fun toggleFan(sharePref: SharedPreferences?) {
+    fun toggleFan(sharePref: SharedPreferences?, progressBar: View) {
         var status = 1
         if (sharePref?.getInt("fanStatus", 1) == 1) {
             status = 0
         } else {
             status = 1
         }
+        progressBar.visibility = View.VISIBLE
         PiApi.retrofitService.setFanStatus(status).enqueue(object: Callback<Light> {
             override fun onFailure(call: Call<Light>, t: Throwable) {
                 Log.i("game", "failure from toggleFan : " + t.message)
                 _isConnected.value = false
+                progressBar.visibility = View.GONE
             }
 
             override fun onResponse(
@@ -187,6 +205,7 @@ class GameViewModel : ViewModel() {
             ) {
                 Log.i("game", "success : " + response.body() + " code : " + response.code())
                 _fanStatus.value = response.body()?.state
+                progressBar.visibility = View.GONE
                 if (response.code() == 200) {
                     if (_fanStatus.value != null) {
                         sharePref?.edit()?.putInt("fanStatus", _fanStatus.value!!)?.commit()
@@ -259,5 +278,106 @@ class GameViewModel : ViewModel() {
         _temperature.value = sharePref?.getFloat("temperature", -1.0F)
         _growth.value = sharePref?.getInt("growth", -1)
         _sleepiness.value = sharePref?.getInt("sleepiness", -1)
+    }
+
+    fun refreshData(sharedPref: SharedPreferences, progressBar: View) {
+        Log.i("game", "refreshing data...")
+        _refreshing.value = true
+        progressBar.visibility = View.VISIBLE
+        PiApi.retrofitService.getAllStatus().enqueue(object: Callback<PiStatus>{
+            override fun onFailure(call: Call<PiStatus>, t: Throwable) {
+                Log.i("game", "failure : " + t.message)
+                _isConnected.value = false
+                _refreshing.value = false
+                progressBar.visibility = View.GONE
+            }
+
+            override fun onResponse(call: Call<PiStatus>, response: Response<PiStatus>) {
+                Log.i("game", "success : " + response.body() + " code : " + response.code())
+                Log.i("game", "in confirmClicked : sharepref = " + sharedPref)
+                _refreshing.value = false
+                progressBar.visibility = View.GONE
+                if (response.code() == 200) {
+                    _isConnected.value = true
+                    sharedPref.edit().putBoolean("connected", true)
+                        .putInt("lightStatus", response.body()?.light!!)
+                        .putInt("fanStatus", response.body()?.fan!!)
+                        .putFloat("moisture", response.body()?.moisture!!.toFloat())
+                        .putBoolean("foodLevel", response.body()?.isFoodLow!!)
+                        .putFloat("temperature", response.body()?.temperature!!.toFloat())
+                        .putInt("growth", response.body()?.growth!!)
+                        .commit()
+                    _lightStatus.value = response.body()?.light
+                    _fanStatus.value = response.body()?.fan
+                    _moisture.value = response.body()?.moisture?.toFloat()
+                    _isFoodLow.value = response.body()?.isFoodLow
+                    _temperature.value = response.body()?.temperature?.toFloat()
+                    _growth.value = response.body()?.growth
+                    sharedPref.edit().putBoolean("connected", true).commit()
+                } else {
+                    Log.i("game", "response code in reconnect is ${response.code()} " +
+                            ": ${response.errorBody()} : ${response.message()}")
+                }
+            }
+        })
+        _sleepiness.value = sharedPref.getInt("sleepiness", -1)
+    }
+
+    fun getRefreshing() : Boolean {
+        if (_refreshing.value != null) {
+            return _refreshing.value!!
+        } else {
+            _refreshing.value = false
+            return _refreshing.value!!
+        }
+    }
+
+    fun showPopup(binding: FragmentGameBinding, inflater: LayoutInflater, text: String){
+        val view = inflater.inflate(R.layout.popup_game_info,null)
+
+        view.findViewById<TextView>(R.id.popup_game_info_text).text = text
+
+        val popupWindow = PopupWindow(
+            view, // Custom view to show in popup window
+            LinearLayout.LayoutParams.WRAP_CONTENT, // Width of popup window
+            LinearLayout.LayoutParams.WRAP_CONTENT // Window height
+        )
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            popupWindow.elevation = 10.0F
+        }
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+            // Create a new slide animation for popup window enter transition
+            val slideIn = Slide()
+            slideIn.slideEdge = Gravity.TOP
+            popupWindow.enterTransition = slideIn
+
+            // Slide animation for popup window exit transition
+            val slideOut = Slide()
+            slideOut.slideEdge = Gravity.TOP
+            popupWindow.exitTransition = slideOut
+        }
+        popupWindow.isFocusable = true
+        popupWindow.setBackgroundDrawable(ColorDrawable())
+        popupWindow.isOutsideTouchable = true
+
+        TransitionManager.beginDelayedTransition(binding.gameBackground)
+        popupWindow.showAtLocation(
+            binding.gameBackground, // Location to display popup window
+            Gravity.BOTTOM, // Exact position of layout to display popup
+            0, // X offset
+            100 // Y offset
+        )
+    }
+
+    fun getTempAlertType() :String {
+        if (_temperature.value!!.toDouble() <= 22) {
+            return "cold"
+        } else if (_temperature.value!!.toDouble() >= 28) {
+            return "hot"
+        } else {
+            return "error"
+        }
     }
 }

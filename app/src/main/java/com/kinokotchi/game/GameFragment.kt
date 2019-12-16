@@ -51,7 +51,7 @@ class GameFragment : Fragment() {
 
         binding.gameLightButton.setOnClickListener {
 //            binding.gameMiddlePanel.setBackgroundResource(R.drawable.box)
-            viewModel.toggleLight(sharedPref)
+            viewModel.toggleLight(sharedPref, binding.gameRefreshProgress)
         }
 
         // set background here
@@ -64,7 +64,7 @@ class GameFragment : Fragment() {
         })
 
         binding.gameFanButton.setOnClickListener {
-            viewModel.toggleFan(sharedPref)
+            viewModel.toggleFan(sharedPref, binding.gameRefreshProgress)
         }
 
         viewModel.fanStatus.observe(this, Observer { fanStatus ->
@@ -254,6 +254,39 @@ class GameFragment : Fragment() {
 //                binding.gameLightButton.isEnabled = false
             }
         })
+
+        // maybe add animation when tapping kinoko here
+        binding.gameKinoko.setOnClickListener {
+            if (!viewModel.getRefreshing())
+            {
+                if (sharedPref != null) {
+                    viewModel.refreshData(sharedPref, binding.gameRefreshProgress)
+                }
+            }
+        }
+
+        binding.gameHungerBox.setOnClickListener {
+            viewModel.showPopup(binding, inflater, "Your Kinoko hunger level")// move this string into string.xml later i guess
+        }
+
+        binding.gameSleepinessBox.setOnClickListener {
+            viewModel.showPopup(binding, inflater, "Your Kinoko sleepiness")
+        }
+
+        binding.gameAlertFoodLow.setOnClickListener {
+            viewModel.showPopup(binding, inflater, "Food level in food tank is low")
+        }
+
+        binding.gameAlertTemperature.setOnClickListener {
+            val type = viewModel.getTempAlertType()
+            if (type == "cold") {
+                viewModel.showPopup(binding, inflater, "It's too cold for your Kinoko")
+            } else if (type == "hot") {
+                viewModel.showPopup(binding, inflater, "It's too hot for your Kinoko")
+            } else {
+                Log.i("game", "something went wrong in setOnClickListener for temperature alert popup")
+            }
+        }
 
         // add variable in viewmodel to keep status data observe it here
         // then call and create function in viewmodel to change color in viewmodel sending imageview to be set in function argument

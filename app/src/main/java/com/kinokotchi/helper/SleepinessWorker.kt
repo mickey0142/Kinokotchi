@@ -21,13 +21,13 @@ class SleepinessWorker (appContext: Context, workerParams: WorkerParameters)
 
         // change how much sleepiness change later
         if (sleepiness != -1 && light != -1) {
-            if (light == 0) {
+            if (light == 1) {
                 Log.i("sleepinessWorker", "sleepiness decrease")
                 sleepiness -= 5
                 if (sleepiness < 0) {
                     sleepiness = 0
                 }
-            } else if (light == 1) {
+            } else if (light == 0) {
                 Log.i("sleepinessWorker", "sleepiness increase")
                 sleepiness += 5
                 if (sleepiness > 100) {

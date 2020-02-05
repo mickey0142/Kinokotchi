@@ -6,5 +6,6 @@ data class PiStatus(
     val moisture: Double,
     val isFoodLow: Boolean,
     val temperature: Double,
-    val growth: Int
+    val growth: Int,
+    val encodedImage: String
 )

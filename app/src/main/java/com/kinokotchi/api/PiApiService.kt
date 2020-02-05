@@ -57,6 +57,9 @@ interface PiApiService {
     @POST("/water/")
     fun water(@Field("size") size: String) : Call<ConnectionResponse> // maybe change this to just receive that it is success
 
+    @GET("/image/")
+    fun getImage() : Call<EncodedImage> // maybe change this into object that have multiple type of image such as original image, filtered image
+
     @GET("/status/")
     fun getAllStatus() : Call<PiStatus>
 }

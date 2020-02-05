@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -255,6 +256,13 @@ class GameFragment : Fragment() {
             }
         })
 
+        viewModel.encodedImage.observe(this, Observer { encodedImage ->
+            val thisContext = context
+            if (thisContext != null) {
+                viewModel.updateKinokoHair(thisContext, binding.gameKinokoHair)
+            }
+        })
+
         // maybe add animation when tapping kinoko here
         binding.gameKinoko.setOnClickListener {
             if (!viewModel.getRefreshing())
@@ -284,7 +292,7 @@ class GameFragment : Fragment() {
             } else if (type == "hot") {
                 viewModel.showPopup(binding, inflater, "It's too hot for your Kinoko")
             } else {
-                Log.i("game", "something went wrong in setOnClickListener for temperature alert popup")
+                Log.i("game", "something went wrong in setOnClickListener for temperature alert popupเ")
             }
         }
 

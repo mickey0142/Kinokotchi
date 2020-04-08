@@ -13,4 +13,10 @@
     <string name="cant_connect">Can\'t connect</string>
     <string name="close">close</string>
     <string name="cola">Cola</string>
+    <string name="water">Water</string>
+    <string name="apple">Apple</string>
+    <string name="melon">Melon</string>
+    <string name="burger">Burger</string>
+    <string name="rice">Rice</string>
+
 </resources>

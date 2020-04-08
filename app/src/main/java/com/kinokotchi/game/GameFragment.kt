@@ -57,10 +57,13 @@ class GameFragment : Fragment() {
 
         // set background here
         viewModel.lightStatus.observe(this, Observer { lightStatus ->
+//            temporary background debugging here
             if (lightStatus == 1) {
-                binding.gameBackground.setBackgroundColor(Color.YELLOW)
+//                binding.gameBackground.setBackgroundColor(Color.YELLOW)
+                binding.gameBackground2.setImageResource(R.drawable.bg_morning_1)
             } else {
-                binding.gameBackground.setBackgroundColor(Color.BLUE)
+//                binding.gameBackground.setBackgroundColor(Color.BLUE)
+                binding.gameBackground2.setImageResource(R.drawable.bg_morning_1)
             }
         })
 
@@ -161,27 +164,33 @@ class GameFragment : Fragment() {
 
         viewModel.foodChoice.observe(this, Observer { foodChoice ->
             if (foodChoice == 1) {
-                binding.gameFoodName.text = getString(R.string.size_small)
+                binding.gameFoodSize.text = getString(R.string.size_small)
+                binding.gameFoodName.text = getString(R.string.water)
                 binding.gameFoodIcon.setImageResource(R.drawable.water)
                 foodAnimationResource = R.drawable.water_anim
             } else if (foodChoice == 2) {
-                binding.gameFoodName.text = getString(R.string.size_small)
+                binding.gameFoodSize.text = getString(R.string.size_small)
+                binding.gameFoodName.text = getString(R.string.cola)
                 binding.gameFoodIcon.setImageResource(R.drawable.cola)
                 foodAnimationResource = R.drawable.cola_anim
             } else if (foodChoice == 3) {
-                binding.gameFoodName.text = getString(R.string.size_medium)
+                binding.gameFoodSize.text = getString(R.string.size_medium)
+                binding.gameFoodName.text = getString(R.string.apple)
                 binding.gameFoodIcon.setImageResource(R.drawable.apple)
                 foodAnimationResource = R.drawable.apple_anim
             } else if (foodChoice == 4) {
-                binding.gameFoodName.text = getString(R.string.size_medium)
+                binding.gameFoodSize.text = getString(R.string.size_medium)
+                binding.gameFoodName.text = getString(R.string.melon)
                 binding.gameFoodIcon.setImageResource(R.drawable.melon)
                 foodAnimationResource = R.drawable.melon_anim
             } else if (foodChoice == 5) {
-                binding.gameFoodName.text = getString(R.string.size_large)
+                binding.gameFoodSize.text = getString(R.string.size_large)
+                binding.gameFoodName.text = getString(R.string.burger)
                 binding.gameFoodIcon.setImageResource(R.drawable.burger)
                 foodAnimationResource = R.drawable.burger_anim
             } else if (foodChoice == 6) {
                 binding.gameFoodName.text = getString(R.string.size_large)
+                binding.gameFoodName.text = getString(R.string.rice)
                 binding.gameFoodIcon.setImageResource(R.drawable.rice)
                 foodAnimationResource = R.drawable.rice_anim
             }
@@ -241,7 +250,7 @@ class GameFragment : Fragment() {
         viewModel.isConnected.observe(this, Observer { isConnected ->
             binding.gameReconnectProgress.visibility = View.GONE
             binding.gameReconnectButton.visibility = View.VISIBLE
-            if (isConnected) {
+            if (!isConnected) {
                 binding.gameDisconnectLayout.visibility = View.GONE
                 binding.gameKinoko.visibility = View.VISIBLE
 

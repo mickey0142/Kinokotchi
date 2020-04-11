@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/navigation"
-    app:startDestination="@id/loadingFragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/navigation"
+    app:startDestination="@+id/loadingFragment">
     <fragment
         android:id="@+id/setupFragment"
         android:name="com.kinokotchi.setup.SetupFragment"
-        android:label="SetupFragment" >
+        android:label="SetupFragment">
         <action
             android:id="@+id/action_setupFragment_to_createcharFragment"
             app:destination="@id/createcharFragment" />
@@ -13,7 +14,7 @@
     <fragment
         android:id="@+id/createcharFragment"
         android:name="com.kinokotchi.createchar.CreatecharFragment"
-        android:label="CreatecharFragment" >
+        android:label="CreatecharFragment">
         <action
             android:id="@+id/action_createcharFragment_to_setupFragment"
             app:destination="@id/setupFragment" />
@@ -24,7 +25,7 @@
     <fragment
         android:id="@+id/gameFragment"
         android:name="com.kinokotchi.game.GameFragment"
-        android:label="GameFragment" >
+        android:label="GameFragment">
         <action
             android:id="@+id/action_gameFragment_to_createcharFragment"
             app:destination="@id/createcharFragment" />
@@ -32,7 +33,7 @@
     <fragment
         android:id="@+id/loadingFragment"
         android:name="com.kinokotchi.loading.LoadingFragment"
-        android:label="LoadingFragment" >
+        android:label="LoadingFragment">
         <action
             android:id="@+id/action_loadingFragment_to_setupFragment"
             app:destination="@id/setupFragment" />
@@ -41,6 +42,8 @@
             app:destination="@id/createcharFragment" />
         <action
             android:id="@+id/action_loadingFragment_to_gameFragment"
-            app:destination="@id/gameFragment" />
+            app:destination="@id/gameFragment"
+            app:popUpTo="@+id/loadingFragment"
+            app:popUpToInclusive="true" />
     </fragment>
 </navigation>

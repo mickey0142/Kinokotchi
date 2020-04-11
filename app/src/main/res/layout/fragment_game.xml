@@ -65,10 +65,12 @@
                 app:layout_constraintTop_toTopOf="parent"
                 tools:srcCompat="@drawable/character_idle" />
 
-            <ImageView
+            <pl.droidsonroids.gif.GifImageView
                 android:id="@+id/game_kinoko_hair"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="200dp"
+                android:layout_height="150dp"
+                android:layout_marginTop="40dp"
+                android:src="@drawable/hair"
                 app:layout_constraintEnd_toEndOf="@+id/game_kinoko"
                 app:layout_constraintStart_toStartOf="@+id/game_kinoko"
                 app:layout_constraintTop_toTopOf="@+id/game_kinoko"

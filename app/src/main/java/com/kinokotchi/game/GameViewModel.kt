@@ -32,6 +32,8 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import com.bumptech.glide.Glide
+import okhttp3.ResponseBody
+import java.io.InputStream
 
 class GameViewModel : ViewModel() {
 
@@ -426,5 +428,35 @@ class GameViewModel : ViewModel() {
     fun getDebugText() :String {
         return "light: " + _lightStatus.value.toString() + " fan: " + _fanStatus.value.toString() +
                 "temperature: " + _temperature.value.toString() + "moisture: " + _moisture.value.toString()
+    }
+
+    fun getHair(context: Context, imageView: ImageView) {
+        Log.i("game", "get hair called")
+        var byteArray : ByteArray
+        PiApi.retrofitService.getGif().enqueue(object: Callback<ResponseBody>{
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                Log.i("game", "get hair fail" + t.message)
+            }
+
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                Log.i("game", "get hair success" + response.body())
+                val body = response.body()
+                if (body?.byteStream() != null)
+                {
+                    val inp : InputStream = body.byteStream()
+                    if (response.code() == 200)
+                    {
+                        byteArray = inp.readBytes()
+                        // temporary comment this for debug hair remove this later
+//                        Glide.with(context)
+//                            .load(byteArray)
+//                            .error(R.drawable.alert_too_cold)
+//                            .into(imageView)
+                        Log.d("game", "set hair into view " + response.code())
+                    }
+                }
+
+            }
+        })
     }
 }

@@ -16,7 +16,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/loading_root"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="#FFF7BB">
 
 
         <TextView
@@ -58,7 +59,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/icon"
-            tools:srcCompat="@drawable/icon" />
+            app:srcCompat="@drawable/kinokotchi_icon"
+            tools:srcCompat="@drawable/kinokotchi_icon" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

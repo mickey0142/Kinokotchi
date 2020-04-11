@@ -21,6 +21,12 @@ import kotlin.concurrent.schedule
 
 class GameFragment : Fragment() {
 
+    private val MOISTURE_LOW = 20
+    private val SLEEPINESS_LOW = 20
+    private val SLEEPINESS_HIGH = 100
+    private val TEMPERATURE_COLD = 22
+    private val TEMPERATURE_HOT = 28
+
     private val viewModel: GameViewModel by lazy {
         ViewModelProviders.of(this).get(GameViewModel::class.java)
     }
@@ -40,6 +46,8 @@ class GameFragment : Fragment() {
         binding.viewModel = viewModel
 
         viewModel.initValue(sharedPref)
+
+        val context = this.context
 
         // app crash when trying to use piapi which will cause app to create object piapi which will
         // trying to create retrofitservice from invalid url which will make app crash
@@ -65,6 +73,7 @@ class GameFragment : Fragment() {
 //                binding.gameBackground.setBackgroundColor(Color.BLUE)
                 binding.gameBackground2.setImageResource(R.drawable.bg_morning_1)
             }
+            changeAnimation(binding)
         })
 
         binding.gameFanButton.setOnClickListener {
@@ -91,6 +100,7 @@ class GameFragment : Fragment() {
             } else {
                 binding.gameHungerBar.setBackgroundColor(Color.GREEN)
             }
+            changeAnimation(binding)
         })
 
         viewModel.sleepiness.observe(this, Observer { sleepiness ->
@@ -109,18 +119,20 @@ class GameFragment : Fragment() {
             } else {
                 binding.gameSleepinessBar.setBackgroundColor(Color.GREEN)
             }
+            changeAnimation(binding)
         })
 
         viewModel.temperature.observe(this, Observer {temperature ->
-            if (temperature <= 22) {
+            if (temperature <= TEMPERATURE_COLD) {
                 binding.gameAlertTemperature.setImageResource(R.drawable.alert_too_cold)
                 binding.gameAlertTemperature.visibility = View.VISIBLE
-            } else if (temperature >= 28) {
+            } else if (temperature >= TEMPERATURE_HOT) {
                 binding.gameAlertTemperature.setImageResource(R.drawable.alert_too_hot)
                 binding.gameAlertTemperature.visibility = View.VISIBLE
             } else {
                 binding.gameAlertTemperature.visibility = View.GONE
             }
+            changeAnimation(binding)
         })
 
         viewModel.isFoodLow.observe(this, Observer {isFoodLow ->
@@ -250,7 +262,13 @@ class GameFragment : Fragment() {
         viewModel.isConnected.observe(this, Observer { isConnected ->
             binding.gameReconnectProgress.visibility = View.GONE
             binding.gameReconnectButton.visibility = View.VISIBLE
+
+            // temporary add ! to this if to debug without raspberry pi
             if (!isConnected) {
+                if (context != null)
+                {
+                    viewModel.getHair(context, binding.gameKinokoHair)
+                }
                 binding.gameDisconnectLayout.visibility = View.GONE
                 binding.gameKinoko.visibility = View.VISIBLE
 
@@ -265,10 +283,11 @@ class GameFragment : Fragment() {
             }
         })
 
+        // old hair display
         viewModel.encodedImage.observe(this, Observer { encodedImage ->
             val thisContext = context
             if (thisContext != null) {
-                viewModel.updateKinokoHair(thisContext, binding.gameKinokoHair)
+                //viewModel.updateKinokoHair(thisContext, binding.gameKinokoHair)
             }
         })
 
@@ -278,6 +297,8 @@ class GameFragment : Fragment() {
             {
                 if (sharedPref != null) {
                     viewModel.refreshData(sharedPref, binding.gameRefreshProgress)
+//                    binding.tempGif.setImageURI("https://buffer.com/resources/wp-content/uploads/2016/06/giphy.gif")
+
                 }
             }
         }
@@ -305,17 +326,58 @@ class GameFragment : Fragment() {
             }
         }
 
-        // add variable in viewmodel to keep status data observe it here
-        // then call and create function in viewmodel to change color in viewmodel sending imageview to be set in function argument
-        // in that function set color according to status level
-//        binding.gameTemperatureLevel.setBackgroundColor(Color.RED)
-//        binding.gameMoistureLevel.setBackgroundColor(Color.YELLOW)
-//        binding.gameSleepinessLevel.setBackgroundColor(Color.GREEN)
-
         binding.setLifecycleOwner(this)
 
         viewModel.setIsConnect(sharedPref!!.getBoolean("connected", false))
 
         return binding.root
+    }
+
+    private fun changeAnimation(binding: FragmentGameBinding){
+        val lightStatus = binding.viewModel?.lightStatus?.value
+        val moisture = binding.viewModel?.moisture?.value
+        val temperature = binding.viewModel?.temperature?.value
+        val sleepiness = binding.viewModel?.sleepiness?.value
+
+        // in case of null value set animation to idle
+        if (lightStatus == null || moisture == null || temperature == null || sleepiness == null) {
+            binding.gameKinoko.setImageResource(R.drawable.character_idle)
+            return
+        }
+
+        if (lightStatus == 1) {
+            if (moisture <= MOISTURE_LOW) {
+                binding.gameKinoko.setImageResource(R.drawable.character_hungry)
+            }
+            else if (temperature <= TEMPERATURE_COLD) {
+                binding.gameKinoko.setImageResource(R.drawable.character_freezing)
+            }
+            else if (temperature >= TEMPERATURE_HOT) {
+                binding.gameKinoko.setImageResource(R.drawable.character_hot)
+            }
+            else if (sleepiness <= SLEEPINESS_LOW) {
+                binding.gameKinoko.setImageResource(R.drawable.character_sleepy)
+            }
+            else {
+                binding.gameKinoko.setImageResource(R.drawable.character_idle)
+            }
+        }
+        else if (lightStatus == 0) {
+            if (moisture <= MOISTURE_LOW) {
+                binding.gameKinoko.setImageResource(R.drawable.character_hungry_night)
+            }
+            else if (temperature <= TEMPERATURE_COLD) {
+                binding.gameKinoko.setImageResource(R.drawable.character_freezing_night)
+            }
+            else if (temperature >= TEMPERATURE_HOT) {
+                binding.gameKinoko.setImageResource(R.drawable.character_hot_night)
+            }
+            else if (sleepiness >= SLEEPINESS_HIGH) {
+                binding.gameKinoko.setImageResource(R.drawable.character_wave_night)
+            }
+            else {
+                binding.gameKinoko.setImageResource(R.drawable.character_sleeping)
+            }
+        }
     }
 }

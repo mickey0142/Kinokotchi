@@ -17,10 +17,9 @@
         android:id="@+id/game_background"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#00FFE7">
+        android:background="#808080">
 
-<!--        <pl.droidsonroids.gif.GifImageView--> <!--temporary commented for debugging -->
-        <ImageView
+        <pl.droidsonroids.gif.GifImageView
             android:id="@+id/game_background2"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

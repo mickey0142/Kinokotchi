@@ -68,10 +68,18 @@ class GameFragment : Fragment() {
 //            temporary background debugging here
             if (lightStatus == 1) {
 //                binding.gameBackground.setBackgroundColor(Color.YELLOW)
-                binding.gameBackground2.setImageResource(R.drawable.bg_morning_1)
+                if (viewModel.fanStatus.value == 1) {
+                    binding.gameBackground2.setImageResource(R.drawable.bg_morning_fan)
+                } else {
+                    binding.gameBackground2.setImageResource(R.drawable.bg_morning)
+                }
             } else {
 //                binding.gameBackground.setBackgroundColor(Color.BLUE)
-                binding.gameBackground2.setImageResource(R.drawable.bg_morning_1)
+                if (viewModel.fanStatus.value == 1) {
+                    binding.gameBackground2.setImageResource(R.drawable.bg_night_fan)
+                } else {
+                    binding.gameBackground2.setImageResource(R.drawable.bg_night)
+                }
             }
             changeAnimation(binding)
         })
@@ -81,7 +89,20 @@ class GameFragment : Fragment() {
         }
 
         viewModel.fanStatus.observe(this, Observer { fanStatus ->
-            // do something like changing animation or something here
+            if (fanStatus == 1) {
+                if (viewModel.lightStatus.value == 1) {
+                    binding.gameBackground2.setImageResource(R.drawable.bg_morning_fan)
+                } else {
+                    binding.gameBackground2.setImageResource(R.drawable.bg_night_fan)
+                }
+            } else {
+                if (viewModel.lightStatus.value == 1) {
+                    binding.gameBackground2.setImageResource(R.drawable.bg_morning)
+                } else {
+                    binding.gameBackground2.setImageResource(R.drawable.bg_night)
+                }
+            }
+            changeAnimation(binding)
         })
 
         viewModel.moisture.observe(this, Observer {moisture ->

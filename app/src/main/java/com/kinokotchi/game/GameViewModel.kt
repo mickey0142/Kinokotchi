@@ -459,4 +459,8 @@ class GameViewModel : ViewModel() {
             }
         })
     }
+
+    fun tempDebugSetTemp() {
+        _temperature.value = 25f
+    }
 }

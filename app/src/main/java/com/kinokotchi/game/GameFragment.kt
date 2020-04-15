@@ -285,19 +285,21 @@ class GameFragment : Fragment() {
             binding.gameReconnectButton.visibility = View.VISIBLE
 
             // temporary add ! to this if to debug without raspberry pi
-            if (!isConnected) {
+            if (isConnected) {
                 if (context != null)
                 {
                     viewModel.getHair(context, binding.gameKinokoHair)
                 }
                 binding.gameDisconnectLayout.visibility = View.GONE
                 binding.gameKinoko.visibility = View.VISIBLE
+                binding.gameKinokoHair.visibility = View.VISIBLE
 
                 // enable all button here
                 binding.gameLightButton.isEnabled = true
             } else {
                 binding.gameDisconnectLayout.visibility = View.VISIBLE
                 binding.gameKinoko.visibility = View.GONE
+                binding.gameKinokoHair.visibility = View.GONE
 
                 // disable all button here
 //                binding.gameLightButton.isEnabled = false
@@ -338,6 +340,7 @@ class GameFragment : Fragment() {
 
         binding.gameAlertTemperature.setOnClickListener {
             val type = viewModel.getTempAlertType()
+            viewModel.tempDebugSetTemp()
             if (type == "cold") {
                 viewModel.showPopup(binding, inflater, "It's too cold for your Kinoko")
             } else if (type == "hot") {
@@ -365,6 +368,9 @@ class GameFragment : Fragment() {
             binding.gameKinoko.setImageResource(R.drawable.character_idle)
             return
         }
+
+        // move hair back to its original position
+        binding.gameKinokoHair.translationY = 0f
 
         if (lightStatus == 1) {
             if (moisture <= MOISTURE_LOW) {
@@ -397,6 +403,9 @@ class GameFragment : Fragment() {
                 binding.gameKinoko.setImageResource(R.drawable.character_wave_night)
             }
             else {
+                // move hair down a little bit because of sleeping animation
+                // maybe change this to calculate for dp somehow
+                binding.gameKinokoHair.translationY = 25f
                 binding.gameKinoko.setImageResource(R.drawable.character_sleeping)
             }
         }

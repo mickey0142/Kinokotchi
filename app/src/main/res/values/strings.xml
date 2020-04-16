@@ -2,7 +2,6 @@
     <string name="app_name">Kinokotchi</string>
     <string name="setup_pi_connection">Enter URL connected to your box here</string>
     <string name="setup_connect_button">connect</string>
-    <string name="createchar_name">Enter your mushroom name here</string>
     <string name="createchar_create_button">create</string>
     <string name="reconnect">reconnect</string>
     <string name="not_connect">You are not connected</string>
@@ -21,5 +20,9 @@
     <string name="restart_text">Your Kinoko is fully grown and ready to go on an adventure outside!
         \n\nAfter you release them you can harvest mushroom and start new game
         \n\nRelease them?</string>
+    <string name="choose_your_kinoko">Choose your Kinoko</string>
+    <string name="add_new_kinoko">add new Kinoko</string>
+    <string name="remove_box_comfirm_text">Do you want to remove this Kinoko?</string>
+    <string name="enter_name">Enter your Kinoko\'s name here</string>
 
 </resources>

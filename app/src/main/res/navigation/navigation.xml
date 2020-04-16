@@ -2,22 +2,20 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/navigation"
-    app:startDestination="@+id/loadingFragment">
+    app:startDestination="@id/chooseFragment">
     <fragment
         android:id="@+id/setupFragment"
         android:name="com.kinokotchi.setup.SetupFragment"
         android:label="SetupFragment">
         <action
             android:id="@+id/action_setupFragment_to_createcharFragment"
-            app:destination="@id/createcharFragment" />
+            app:destination="@id/createcharFragment"
+            app:popUpToInclusive="false" />
     </fragment>
     <fragment
         android:id="@+id/createcharFragment"
         android:name="com.kinokotchi.createchar.CreatecharFragment"
         android:label="CreatecharFragment">
-        <action
-            android:id="@+id/action_createcharFragment_to_setupFragment"
-            app:destination="@id/setupFragment" />
         <action
             android:id="@+id/action_createcharFragment_to_gameFragment"
             app:destination="@id/gameFragment" />
@@ -38,14 +36,30 @@
         android:label="LoadingFragment">
         <action
             android:id="@+id/action_loadingFragment_to_setupFragment"
-            app:destination="@id/setupFragment" />
+            app:destination="@id/setupFragment"
+            app:popUpTo="@+id/loadingFragment"
+            app:popUpToInclusive="true" />
         <action
             android:id="@+id/action_loadingFragment_to_createcharFragment"
-            app:destination="@id/createcharFragment" />
+            app:destination="@id/createcharFragment"
+            app:popUpTo="@+id/loadingFragment"
+            app:popUpToInclusive="true" />
         <action
             android:id="@+id/action_loadingFragment_to_gameFragment"
             app:destination="@id/gameFragment"
             app:popUpTo="@+id/loadingFragment"
             app:popUpToInclusive="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/chooseFragment"
+        android:name="com.kinokotchi.choose.ChooseFragment"
+        android:label="ChooseFragment" >
+        <action
+            android:id="@+id/action_chooseFragment_to_loadingFragment"
+            app:destination="@id/loadingFragment" />
+        <action
+            android:id="@+id/action_chooseFragment_to_setupFragment"
+            app:destination="@+id/setupFragment"
+            app:popUpToInclusive="false" />
     </fragment>
 </navigation>

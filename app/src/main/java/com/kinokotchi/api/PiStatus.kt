@@ -7,5 +7,6 @@ data class PiStatus(
     val isFoodLow: Boolean,
     val temperature: Double,
     val readyToHarvest: Boolean,
-    val encodedImage: String
+    val encodedImage: String,
+    val planted: Boolean
 )

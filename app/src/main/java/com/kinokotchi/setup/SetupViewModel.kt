@@ -1,6 +1,7 @@
 package com.kinokotchi.setup
 
 import android.content.SharedPreferences
+import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.transition.Slide
 import android.transition.TransitionManager
@@ -136,6 +137,10 @@ class SetupViewModel : ViewModel() {
         buttonPopup.setOnClickListener {
             popupWindow.dismiss()
         }
+
+        popupWindow.isFocusable = true
+        popupWindow.setBackgroundDrawable(ColorDrawable())
+        popupWindow.isOutsideTouchable = true
 
         TransitionManager.beginDelayedTransition(binding.setupRoot)
         popupWindow.showAtLocation(

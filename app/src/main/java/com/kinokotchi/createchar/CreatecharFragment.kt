@@ -1,6 +1,7 @@
 package com.kinokotchi.createchar
 
 import android.content.Context
+import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
 import android.transition.Slide
@@ -46,7 +47,6 @@ class CreatecharFragment : Fragment() {
         binding.viewModel = viewModel
 
         val sharedPref =  context?.getSharedPreferences("Kinokotchi", Context.MODE_PRIVATE)
-        binding.textView.text = sharedPref?.getString("connectionURL", "no connection url !")
 
         binding.setLifecycleOwner(this)
 
@@ -76,6 +76,7 @@ class CreatecharFragment : Fragment() {
                                     .putFloat("temperature", response.body()?.temperature!!.toFloat())
                                     .putBoolean("readyToHarvest", response.body()?.readyToHarvest!!)
                                     .putString("encodedImage", response.body()?.encodedImage!!)
+                                    .putBoolean("planted", response.body()?.planted!!)
                                     .commit()
                                 Log.i("create char", "go to game fragment - connected")
                                 viewModel.setIsComplete("game")
@@ -95,11 +96,6 @@ class CreatecharFragment : Fragment() {
                 })
             }
         })
-
-//        if (sharedPref?.getString("mushroomName", "") != "") {
-//            findNavController().navigate(CreatecharFragmentDirections.actionCreatecharFragmentToGameFragment())
-//            Log.i("createchar", "mushroomName is not empty - go to game fragment")
-//        }
 
         binding.createcharCreateButton.setOnClickListener {
             if (binding.createcharName.text.toString() == "") {
@@ -141,6 +137,10 @@ class CreatecharFragment : Fragment() {
         buttonPopup.setOnClickListener {
             popupWindow.dismiss()
         }
+
+        popupWindow.isFocusable = true
+        popupWindow.setBackgroundDrawable(ColorDrawable())
+        popupWindow.isOutsideTouchable = true
 
         TransitionManager.beginDelayedTransition(binding.createCharRoot)
         popupWindow.showAtLocation(

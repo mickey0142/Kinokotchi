@@ -61,33 +61,6 @@ class LoadingFragment : Fragment() {
 
         binding.viewModel = viewModel
 
-        // ??? check internet connection don't know when should i use this
-        // don't know if it work either... test it later
-//        InternetCheck(object : InternetCheck.Consumer {
-//            override fun accept(internet: Boolean?) {
-//                Log.d("test", "internet is : " + internet)
-//            }
-//        })
-
-//        val intent = Intent(context, MainActivity::class.java).apply{
-//            flags = Intent.FLAG_ACTIVITY_CLEAR_TASK // is this needed?
-//        }
-//
-//        val pendingIntent: PendingIntent = PendingIntent.getActivity(context!!, 0, intent, 0)
-//
-//        var build = NotificationCompat.Builder(context!!, "0")
-//            .setSmallIcon(R.drawable.ic_alert)
-//            .setContentTitle("your mushroom")
-//            .setContentText("need water, too cold, need sleep")
-//            .setPriority(NotificationCompat.PRIORITY_HIGH)
-//            .setAutoCancel(true)
-//            .setContentIntent(pendingIntent)
-//            .setDefaults(DEFAULT_VIBRATE or DEFAULT_SOUND)
-//
-//        with(NotificationManagerCompat.from(context!!)){
-//            notify(0, build.build())
-//        }
-
         // refactor by moving all this to viewmodel later
         val connectionUrl = sharedPref?.getString("connectionURL", "")
         if (connectionUrl != "") {
@@ -120,7 +93,7 @@ class LoadingFragment : Fragment() {
                                     .putFloat("temperature", response.body()?.temperature!!.toFloat())
                                     .putBoolean("readyToHarvest", response.body()?.readyToHarvest!!)
                                     .putString("encodedImage", response.body()?.encodedImage!!)
-                                    .putBoolean("readyToHarvest", response.body()?.readyToHarvest!!)
+                                    .putBoolean("planted", response.body()?.planted!!)
                                     .commit()
                                 Log.i("loading", "go to game fragment - connected")
                                 viewModel.setIsComplete("game")

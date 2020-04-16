@@ -102,6 +102,10 @@ class GameViewModel : ViewModel() {
     val restarting: LiveData<Boolean>
         get() = _restarting
 
+    private val _planted = MutableLiveData<Boolean>()
+    val planted: LiveData<Boolean>
+        get() = _planted
+
     fun setupAPIUrl(sharePref: SharedPreferences?) {
         if (sharePref != null)
         {
@@ -144,6 +148,7 @@ class GameViewModel : ViewModel() {
                         .putFloat("temperature", response.body()?.temperature!!.toFloat())
                         .putBoolean("readyToHarvest", response.body()?.readyToHarvest!!)
                         .putString("encodedImage", response.body()?.encodedImage!!)
+                        .putBoolean("planted", response.body()?.planted!!)
                         .commit()
                     _lightStatus.value = response.body()?.light
                     _fanStatus.value = response.body()?.fan
@@ -152,6 +157,7 @@ class GameViewModel : ViewModel() {
                     _temperature.value = response.body()?.temperature?.toFloat()
                     _readyToHarvest.value = response.body()?.readyToHarvest!!
                     _encodedImage.value = response.body()?.encodedImage!!
+                    _planted.value = response.body()?.planted!!
                     sharedPref.edit().putBoolean("connected", true).commit()
                 } else {
                     Log.i("game", "response code in reconnect is ${response.code()} " +
@@ -297,6 +303,7 @@ class GameViewModel : ViewModel() {
         _readyToHarvest.value = sharePref?.getBoolean("readyToHarvest", false)
         _encodedImage.value = sharePref?.getString("encodedImage", "")
         _sleepiness.value = sharePref?.getInt("sleepiness", -1)
+        _planted.value = sharePref?.getBoolean("planted", false)
         _restarting.value = false
     }
 
@@ -327,6 +334,7 @@ class GameViewModel : ViewModel() {
                         .putFloat("temperature", response.body()?.temperature!!.toFloat())
                         .putBoolean("readyToHarvest", response.body()?.readyToHarvest!!)
                         .putString("encodedImage", response.body()?.encodedImage!!)
+                        .putBoolean("planted", response.body()?.planted!!)
                         .commit()
                     _lightStatus.value = response.body()?.light
                     _fanStatus.value = response.body()?.fan
@@ -335,6 +343,7 @@ class GameViewModel : ViewModel() {
                     _temperature.value = response.body()?.temperature?.toFloat()
                     _readyToHarvest.value = response.body()?.readyToHarvest
                     _encodedImage.value = response.body()?.encodedImage!!
+                    _planted.value = response.body()?.planted!!
                     sharedPref.edit().putBoolean("connected", true).commit()
                 } else {
                     _isConnected.value = false

@@ -78,6 +78,7 @@ class SetupFragment : Fragment() {
                                     .putFloat("temperature", response.body()?.temperature!!.toFloat())
                                     .putBoolean("readyToHarvest", response.body()?.readyToHarvest!!)
                                     .putString("encodedImage", response.body()?.encodedImage!!)
+                                    .putBoolean("planted", response.body()?.planted!!)
                                     .commit()
                                 Log.i("setup", "go to game fragment - connected")
                                 viewModel.setIsComplete("createchar")
@@ -99,11 +100,6 @@ class SetupFragment : Fragment() {
                 binding.setupProgressBar.visibility = View.GONE
             }
         })
-
-        if (sharedPref?.getString("connectionURL", "") != "") {
-            findNavController().navigate(SetupFragmentDirections.actionSetupFragmentToCreatecharFragment())
-            Log.i("setup", "connectionURL is not empty - go to createchar fragment")
-        }
 
         binding.setupConnectButton.setOnClickListener {
             viewModel.confirmClicked(binding.setupConnectionUrl.text.toString(), sharedPref,

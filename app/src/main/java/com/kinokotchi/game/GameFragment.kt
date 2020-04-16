@@ -14,6 +14,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.fragment.findNavController
 import com.kinokotchi.R
 import com.kinokotchi.databinding.FragmentGameBinding
 import java.util.*
@@ -285,7 +286,7 @@ class GameFragment : Fragment() {
             binding.gameReconnectButton.visibility = View.VISIBLE
 
             // temporary add ! to this if to debug without raspberry pi
-            if (isConnected) {
+            if (!isConnected) {
                 if (context != null)
                 {
                     viewModel.getHair(context, binding.gameKinokoHair)
@@ -293,6 +294,7 @@ class GameFragment : Fragment() {
                 binding.gameDisconnectLayout.visibility = View.GONE
                 binding.gameKinoko.visibility = View.VISIBLE
                 binding.gameKinokoHair.visibility = View.VISIBLE
+                binding.gameReconnectButton.visibility = View.VISIBLE
 
                 // enable all button here
                 binding.gameLightButton.isEnabled = true
@@ -300,6 +302,7 @@ class GameFragment : Fragment() {
                 binding.gameDisconnectLayout.visibility = View.VISIBLE
                 binding.gameKinoko.visibility = View.GONE
                 binding.gameKinokoHair.visibility = View.GONE
+                binding.gameReconnectButton.visibility = View.GONE
 
                 // disable all button here
 //                binding.gameLightButton.isEnabled = false
@@ -313,6 +316,52 @@ class GameFragment : Fragment() {
                 //viewModel.updateKinokoHair(thisContext, binding.gameKinokoHair)
             }
         })
+
+        viewModel.readyToHarvest.observe(this, Observer { readyToHarvest ->
+            // to temporary debug restart button add ! to this if
+            if (!readyToHarvest) {
+                binding.gameRestartButton.visibility = View.VISIBLE
+            } else {
+                binding.gameRestartButton.visibility = View.GONE
+            }
+        })
+
+        viewModel.restarting.observe(this, Observer { restarting ->
+            if (restarting) {
+                Log.i("game", "restarting...")
+                binding.gameRestartPanel.visibility = View.VISIBLE
+                binding.gameRestartAnimation.setImageResource(R.drawable.restart_anim)
+                binding.gameRestartAnimation.animate().setStartDelay(1500) // change this duration to gif duration
+                    .alpha(1.0f).setDuration(1)
+                    .setListener(object: Animator.AnimatorListener{
+                        override fun onAnimationRepeat(animation: Animator?) {
+                        }
+
+                        override fun onAnimationEnd(animation: Animator?, isReverse: Boolean) {
+                            super.onAnimationEnd(animation, isReverse)
+                        }
+
+                        override fun onAnimationEnd(animation: Animator?) {
+                            viewModel.restartGame(sharedPref, findNavController())
+                        }
+
+                        override fun onAnimationCancel(animation: Animator?) {
+                        }
+
+                        override fun onAnimationStart(animation: Animator?, isReverse: Boolean) {
+                            super.onAnimationStart(animation, isReverse)
+                        }
+
+                        override fun onAnimationStart(animation: Animator?) {
+                        }
+                    })
+            }
+        })
+        
+        binding.gameRestartButton.setOnClickListener {
+            // show popup to restart game here
+            viewModel.showRestartPopup(binding, inflater)
+        }
 
         // maybe add animation when tapping kinoko here
         binding.gameKinoko.setOnClickListener {
@@ -366,6 +415,7 @@ class GameFragment : Fragment() {
         // in case of null value set animation to idle
         if (lightStatus == null || moisture == null || temperature == null || sleepiness == null) {
             binding.gameKinoko.setImageResource(R.drawable.character_idle)
+            binding.gameRestartButton.setImageResource(R.drawable.traveling_bag_morning)
             return
         }
 
@@ -373,6 +423,7 @@ class GameFragment : Fragment() {
         binding.gameKinokoHair.translationY = 0f
 
         if (lightStatus == 1) {
+            binding.gameRestartButton.setImageResource(R.drawable.traveling_bag_morning)
             if (moisture <= MOISTURE_LOW) {
                 binding.gameKinoko.setImageResource(R.drawable.character_hungry)
             }
@@ -390,6 +441,7 @@ class GameFragment : Fragment() {
             }
         }
         else if (lightStatus == 0) {
+            binding.gameRestartButton.setImageResource(R.drawable.traveling_bag_night)
             if (moisture <= MOISTURE_LOW) {
                 binding.gameKinoko.setImageResource(R.drawable.character_hungry_night)
             }

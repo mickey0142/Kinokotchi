@@ -18,5 +18,8 @@
     <string name="melon">Melon</string>
     <string name="burger">Burger</string>
     <string name="rice">Rice</string>
+    <string name="restart_text">Your Kinoko is fully grown and ready to go on an adventure outside!
+        \n\nAfter you release them you can harvest mushroom and start new game
+        \n\nRelease them?</string>
 
 </resources>

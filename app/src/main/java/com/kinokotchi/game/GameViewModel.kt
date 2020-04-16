@@ -18,6 +18,7 @@ import android.widget.*
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.kinokotchi.R
 import com.kinokotchi.api.*
@@ -69,9 +70,9 @@ class GameViewModel : ViewModel() {
     val temperature: LiveData<Float>
         get() = _temperature
 
-    private val _growth = MutableLiveData<Int>()
-    val growth: LiveData<Int>
-        get() = _growth
+    private val _readyToHarvest = MutableLiveData<Boolean>()
+    val readyToHarvest: LiveData<Boolean>
+        get() = _readyToHarvest
 
     private val _foodChoice = MutableLiveData<Int>()
     val foodChoice: LiveData<Int>
@@ -96,6 +97,10 @@ class GameViewModel : ViewModel() {
     private val _encodedImage = MutableLiveData<String>()
     val encodedImage: LiveData<String>
         get() = _encodedImage
+
+    private val _restarting = MutableLiveData<Boolean>()
+    val restarting: LiveData<Boolean>
+        get() = _restarting
 
     fun setupAPIUrl(sharePref: SharedPreferences?) {
         if (sharePref != null)
@@ -137,7 +142,7 @@ class GameViewModel : ViewModel() {
                         .putFloat("moisture", response.body()?.moisture!!.toFloat())
                         .putBoolean("foodLevel", response.body()?.isFoodLow!!)
                         .putFloat("temperature", response.body()?.temperature!!.toFloat())
-                        .putInt("growth", response.body()?.growth!!)
+                        .putBoolean("readyToHarvest", response.body()?.readyToHarvest!!)
                         .putString("encodedImage", response.body()?.encodedImage!!)
                         .commit()
                     _lightStatus.value = response.body()?.light
@@ -145,7 +150,7 @@ class GameViewModel : ViewModel() {
                     _moisture.value = response.body()?.moisture?.toFloat()
                     _isFoodLow.value = response.body()?.isFoodLow
                     _temperature.value = response.body()?.temperature?.toFloat()
-                    _growth.value = response.body()?.growth
+                    _readyToHarvest.value = response.body()?.readyToHarvest!!
                     _encodedImage.value = response.body()?.encodedImage!!
                     sharedPref.edit().putBoolean("connected", true).commit()
                 } else {
@@ -289,9 +294,10 @@ class GameViewModel : ViewModel() {
         _moisture.value = sharePref?.getFloat("moisture", -1.0F)
         _isFoodLow.value = sharePref?.getBoolean("isFoodLow", false)
         _temperature.value = sharePref?.getFloat("temperature", -1.0F)
-        _growth.value = sharePref?.getInt("growth", -1)
+        _readyToHarvest.value = sharePref?.getBoolean("readyToHarvest", false)
         _encodedImage.value = sharePref?.getString("encodedImage", "")
         _sleepiness.value = sharePref?.getInt("sleepiness", -1)
+        _restarting.value = false
     }
 
     fun refreshData(sharedPref: SharedPreferences, progressBar: View) {
@@ -317,9 +323,9 @@ class GameViewModel : ViewModel() {
                         .putInt("lightStatus", response.body()?.light!!)
                         .putInt("fanStatus", response.body()?.fan!!)
                         .putFloat("moisture", response.body()?.moisture!!.toFloat())
-                        .putBoolean("foodLevel", response.body()?.isFoodLow!!)
+                        .putBoolean("isFoodLow", response.body()?.isFoodLow!!)
                         .putFloat("temperature", response.body()?.temperature!!.toFloat())
-                        .putInt("growth", response.body()?.growth!!)
+                        .putBoolean("readyToHarvest", response.body()?.readyToHarvest!!)
                         .putString("encodedImage", response.body()?.encodedImage!!)
                         .commit()
                     _lightStatus.value = response.body()?.light
@@ -327,7 +333,7 @@ class GameViewModel : ViewModel() {
                     _moisture.value = response.body()?.moisture?.toFloat()
                     _isFoodLow.value = response.body()?.isFoodLow
                     _temperature.value = response.body()?.temperature?.toFloat()
-                    _growth.value = response.body()?.growth
+                    _readyToHarvest.value = response.body()?.readyToHarvest
                     _encodedImage.value = response.body()?.encodedImage!!
                     sharedPref.edit().putBoolean("connected", true).commit()
                 } else {
@@ -413,6 +419,75 @@ class GameViewModel : ViewModel() {
             0, // X offset
             100 // Y offset
         )
+    }
+
+    fun showRestartPopup(binding: FragmentGameBinding, inflater: LayoutInflater){
+        val view = inflater.inflate(R.layout.popup_restart,null)
+
+        val popupWindow = PopupWindow(
+            view, // Custom view to show in popup window
+            LinearLayout.LayoutParams.WRAP_CONTENT, // Width of popup window
+            LinearLayout.LayoutParams.WRAP_CONTENT // Window height
+        )
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            popupWindow.elevation = 10.0F
+        }
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+            // Create a new slide animation for popup window enter transition
+            val slideIn = Slide()
+            slideIn.slideEdge = Gravity.TOP
+            popupWindow.enterTransition = slideIn
+
+            // Slide animation for popup window exit transition
+            val slideOut = Slide()
+            slideOut.slideEdge = Gravity.TOP
+            popupWindow.exitTransition = slideOut
+        }
+        popupWindow.isFocusable = true
+        popupWindow.setBackgroundDrawable(ColorDrawable())
+        popupWindow.isOutsideTouchable = true
+
+        val noButton = view.findViewById<Button>(R.id.restart_no)
+        noButton.setOnClickListener {
+            popupWindow.dismiss()
+        }
+
+        val yesButton = view.findViewById<Button>(R.id.restart_yes)
+        yesButton.setOnClickListener {
+            popupWindow.dismiss()
+            // play animation here then remove all data from sharepref then go to create character page
+            _restarting.value = true
+        }
+
+        TransitionManager.beginDelayedTransition(binding.gameBackground)
+        popupWindow.showAtLocation(
+            binding.gameBackground, // Location to display popup window
+            Gravity.CENTER, // Exact position of layout to display popup
+            0, // X offset
+            100 // Y offset
+        )
+    }
+
+    fun restartGame(sharePref: SharedPreferences?, navController: NavController) {
+        if (sharePref != null) {
+            // comment all this out to test other things first
+//                sharePref.edit()
+//                    .remove("lightStatus")
+//                    .remove("fanStatus")
+//                    .remove("moisture")
+//                    .remove("foodLevel")
+//                    .remove("temperature")
+//                    .remove("readyToHarvest")
+//                    .remove("encodedImage")
+//                    .remove("mushroomName")
+//                    .commit()
+            Log.i("game", "remove data and go to create char")
+            navController.navigate(GameFragmentDirections.actionGameFragmentToCreatecharFragment())
+        } else {
+            Log.i("game", "sharepref is null in restart game")
+        }
     }
 
     fun getTempAlertType() :String {

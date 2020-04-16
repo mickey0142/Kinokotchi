@@ -74,7 +74,8 @@ class CreatecharFragment : Fragment() {
                                     .putFloat("moisture", response.body()?.moisture!!.toFloat())
                                     .putBoolean("isFoodLow", response.body()?.isFoodLow!!)
                                     .putFloat("temperature", response.body()?.temperature!!.toFloat())
-                                    .putInt("growth", response.body()?.growth!!)
+                                    .putBoolean("readyToHarvest", response.body()?.readyToHarvest!!)
+                                    .putString("encodedImage", response.body()?.encodedImage!!)
                                     .commit()
                                 Log.i("create char", "go to game fragment - connected")
                                 viewModel.setIsComplete("game")
@@ -95,10 +96,10 @@ class CreatecharFragment : Fragment() {
             }
         })
 
-        if (sharedPref?.getString("mushroomName", "") != "") {
-            findNavController().navigate(CreatecharFragmentDirections.actionCreatecharFragmentToGameFragment())
-            Log.i("createchar", "connectionURL is not empty - go to game fragment")
-        }
+//        if (sharedPref?.getString("mushroomName", "") != "") {
+//            findNavController().navigate(CreatecharFragmentDirections.actionCreatecharFragmentToGameFragment())
+//            Log.i("createchar", "mushroomName is not empty - go to game fragment")
+//        }
 
         binding.createcharCreateButton.setOnClickListener {
             if (binding.createcharName.text.toString() == "") {

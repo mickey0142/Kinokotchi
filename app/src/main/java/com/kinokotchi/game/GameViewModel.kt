@@ -20,6 +20,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
+import androidx.transition.Transition
 import com.kinokotchi.R
 import com.kinokotchi.api.*
 import com.kinokotchi.databinding.FragmentGameBinding
@@ -468,6 +469,49 @@ class GameViewModel : ViewModel() {
             popupWindow.dismiss()
             // play animation here then remove all data from sharepref then go to create character page
             _restarting.value = true
+        }
+
+        TransitionManager.beginDelayedTransition(binding.gameBackground)
+        popupWindow.showAtLocation(
+            binding.gameBackground, // Location to display popup window
+            Gravity.CENTER, // Exact position of layout to display popup
+            0, // X offset
+            100 // Y offset
+        )
+    }
+
+    fun showLastPopup(binding: FragmentGameBinding, inflater: LayoutInflater, sharePref: SharedPreferences?, navController: NavController, text: String) {
+        val view = inflater.inflate(R.layout.popup_game_info,null)
+
+        view.findViewById<TextView>(R.id.popup_game_info_text).text = text
+
+        val popupWindow = PopupWindow(
+            view, // Custom view to show in popup window
+            LinearLayout.LayoutParams.WRAP_CONTENT, // Width of popup window
+            LinearLayout.LayoutParams.WRAP_CONTENT // Window height
+        )
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            popupWindow.elevation = 10.0F
+        }
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+            // Create a new slide animation for popup window enter transition
+            val slideIn = Slide()
+            slideIn.slideEdge = Gravity.TOP
+            popupWindow.enterTransition = slideIn
+
+            // Slide animation for popup window exit transition
+            val slideOut = Slide()
+            slideOut.slideEdge = Gravity.TOP
+            popupWindow.exitTransition = slideOut
+        }
+        popupWindow.isFocusable = true
+        popupWindow.setBackgroundDrawable(ColorDrawable())
+        popupWindow.isOutsideTouchable = true
+
+        popupWindow.setOnDismissListener {
+            restartGame(sharePref, navController)
         }
 
         TransitionManager.beginDelayedTransition(binding.gameBackground)

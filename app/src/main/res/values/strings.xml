@@ -24,5 +24,7 @@
     <string name="add_new_kinoko">add new Kinoko</string>
     <string name="remove_box_comfirm_text">Do you want to remove this Kinoko?</string>
     <string name="enter_name">Enter your Kinoko\'s name here</string>
+    <string name="createchar_instruction_text">Put mushroom in and close the box first !</string>
+    <string name="restart_instruction">You can take mushroom out of box now</string>
 
 </resources>

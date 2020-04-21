@@ -346,7 +346,7 @@ class GameFragment : Fragment() {
                 Log.i("game", "restarting...")
                 binding.gameRestartPanel.visibility = View.VISIBLE
                 binding.gameRestartAnimation.setImageResource(R.drawable.restart_anim)
-                binding.gameRestartAnimation.animate().setStartDelay(1500) // change this duration to gif duration
+                binding.gameRestartAnimation.animate().setStartDelay(9800) // change this duration to gif duration
                     .alpha(1.0f).setDuration(1)
                     .setListener(object: Animator.AnimatorListener{
                         override fun onAnimationRepeat(animation: Animator?) {
@@ -357,7 +357,8 @@ class GameFragment : Fragment() {
                         }
 
                         override fun onAnimationEnd(animation: Animator?) {
-                            viewModel.restartGame(sharedPref, findNavController())
+//                            viewModel.restartGame(sharedPref, findNavController())
+                            viewModel.showLastPopup(binding, inflater, sharedPref, findNavController(), getString(R.string.restart_instruction))
                         }
 
                         override fun onAnimationCancel(animation: Animator?) {

@@ -54,10 +54,16 @@ class ChooseFragment : Fragment() {
 
     private fun updateBoxList(sharedPref: SharedPreferences?, inflater: LayoutInflater, container: ViewGroup?, binding: FragmentChooseBinding) {
         if (sharedPref != null) {
-            val names = sharedPref.getString("names", "")?.split(",")
-            val urls = sharedPref.getString("urls", "")?.split(",")
+            val namesCheck = sharedPref.getString("names", "")
+            val urlsCheck = sharedPref.getString("urls", "")
+            var isEmpty = false
+            if (namesCheck == "" || urlsCheck == "") {
+                isEmpty = true
+            }
+            val names = namesCheck?.split(",")
+            val urls = urlsCheck?.split(",")
             var i = 0
-            if (names != null && urls != null) {
+            if (names != null && urls != null && !isEmpty) {
                 for (name in names) {
                     val index = i
                     val box = inflater.inflate(R.layout.box_info, container, false)

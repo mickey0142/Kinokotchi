@@ -322,7 +322,7 @@ class GameFragment : Fragment() {
             val planted = viewModel.planted.value
             if (planted != null) {
                 // remove all this ! to disable temporary debugging
-                if (!readyToHarvest && !planted) {
+                if (readyToHarvest && planted) {
                     binding.gameRestartButton.visibility = View.VISIBLE
                 } else {
                     binding.gameRestartButton.visibility = View.GONE
@@ -332,7 +332,7 @@ class GameFragment : Fragment() {
 
         viewModel.planted.observe(this, Observer { planted ->
             // to temporary debug this add ! to this if
-            if (!planted) {
+            if (planted) {
                 binding.gameKinoko.visibility = View.VISIBLE
                 binding.gameKinokoHair.visibility = View.VISIBLE
             } else {

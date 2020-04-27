@@ -66,16 +66,13 @@ class GameFragment : Fragment() {
 
         // set background here
         viewModel.lightStatus.observe(this, Observer { lightStatus ->
-//            temporary background debugging here
             if (lightStatus == 1) {
-//                binding.gameBackground.setBackgroundColor(Color.YELLOW)
                 if (viewModel.fanStatus.value == 1) {
                     binding.gameBackground2.setImageResource(R.drawable.bg_morning_fan)
                 } else {
                     binding.gameBackground2.setImageResource(R.drawable.bg_morning)
                 }
             } else {
-//                binding.gameBackground.setBackgroundColor(Color.BLUE)
                 if (viewModel.fanStatus.value == 1) {
                     binding.gameBackground2.setImageResource(R.drawable.bg_night_fan)
                 } else {
@@ -286,7 +283,7 @@ class GameFragment : Fragment() {
             binding.gameReconnectButton.visibility = View.VISIBLE
 
             // temporary add ! to this if to debug without raspberry pi
-            if (!isConnected) {
+            if (isConnected) {
                 if (context != null)
                 {
                     viewModel.getHair(context, binding.gameKinokoHair, binding.gameKinokoHairRestart)
@@ -294,27 +291,30 @@ class GameFragment : Fragment() {
                 binding.gameDisconnectLayout.visibility = View.GONE
                 binding.gameKinoko.visibility = View.VISIBLE
                 binding.gameKinokoHair.visibility = View.VISIBLE
-                binding.gameReconnectButton.visibility = View.VISIBLE
 
                 // enable all button here
                 binding.gameLightButton.isEnabled = true
+                binding.gameFanButton.isEnabled = true
+                binding.gameFeedButton.isEnabled = true
             } else {
                 binding.gameDisconnectLayout.visibility = View.VISIBLE
                 binding.gameKinoko.visibility = View.GONE
                 binding.gameKinokoHair.visibility = View.GONE
-                binding.gameReconnectButton.visibility = View.GONE
 
                 // disable all button here
-//                binding.gameLightButton.isEnabled = false
+                binding.gameLightButton.isEnabled = false
+                binding.gameFanButton.isEnabled = false
+                binding.gameFeedButton.isEnabled = false
             }
         })
 
         viewModel.readyToHarvest.observe(this, Observer { readyToHarvest ->
             // to temporary debug restart button add ! to this if
             val planted = viewModel.planted.value
-            if (planted != null) {
+            val connected = viewModel.isConnected.value
+            if (planted != null && connected != null) {
                 // remove all this ! to disable temporary debugging
-                if (readyToHarvest && planted) {
+                if (readyToHarvest && planted && connected) {
                     binding.gameRestartButton.visibility = View.VISIBLE
                 } else {
                     binding.gameRestartButton.visibility = View.GONE
@@ -324,7 +324,8 @@ class GameFragment : Fragment() {
 
         viewModel.planted.observe(this, Observer { planted ->
             // to temporary debug this add ! to this if
-            if (planted) {
+            val connected = viewModel.isConnected.value
+            if (planted && connected != null && connected) {
                 binding.gameKinoko.visibility = View.VISIBLE
                 binding.gameKinokoHair.visibility = View.VISIBLE
             } else {

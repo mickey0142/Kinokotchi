@@ -36,6 +36,10 @@ class SleepinessWorker (appContext: Context, workerParams: WorkerParameters)
             }
             Log.i("sleepinessWorker", "sleepiness is : " + sleepiness)
             sharedPref.edit().putInt("sleepiness", sleepiness).commit()
+        } else if (sleepiness == -1) {
+            // add variable sleepiness into sharedPref in case it doesn't exist
+            // which shouldn't happen here.maybe look into this later
+            sharedPref.edit().putInt("sleepiness", 100).commit()
         }
 
         Log.i("noti", "working on sleepiness !")

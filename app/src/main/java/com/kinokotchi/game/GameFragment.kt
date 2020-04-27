@@ -289,7 +289,7 @@ class GameFragment : Fragment() {
             if (!isConnected) {
                 if (context != null)
                 {
-                    viewModel.getHair(context, binding.gameKinokoHair)
+                    viewModel.getHair(context, binding.gameKinokoHair, binding.gameKinokoHairRestart)
                 }
                 binding.gameDisconnectLayout.visibility = View.GONE
                 binding.gameKinoko.visibility = View.VISIBLE
@@ -306,14 +306,6 @@ class GameFragment : Fragment() {
 
                 // disable all button here
 //                binding.gameLightButton.isEnabled = false
-            }
-        })
-
-        // old hair display
-        viewModel.encodedImage.observe(this, Observer { encodedImage ->
-            val thisContext = context
-            if (thisContext != null) {
-                //viewModel.updateKinokoHair(thisContext, binding.gameKinokoHair)
             }
         })
 
@@ -345,6 +337,9 @@ class GameFragment : Fragment() {
             if (restarting) {
                 Log.i("game", "restarting...")
                 binding.gameRestartPanel.visibility = View.VISIBLE
+                binding.gameKinokoRestart.setImageResource(R.drawable.character_wave)
+                binding.gameKinokoRestart.animate().alpha(0f).setDuration(2200).start()
+                binding.gameKinokoHairRestart.animate().alpha(0f).setDuration(2200).start()
                 binding.gameRestartAnimation.setImageResource(R.drawable.restart_anim)
                 binding.gameRestartAnimation.animate().setStartDelay(9800) // change this duration to gif duration
                     .alpha(1.0f).setDuration(1)

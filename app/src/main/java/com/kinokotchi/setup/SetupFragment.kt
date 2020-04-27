@@ -77,7 +77,6 @@ class SetupFragment : Fragment() {
                                     .putBoolean("isFoodLow", response.body()?.isFoodLow!!)
                                     .putFloat("temperature", response.body()?.temperature!!.toFloat())
                                     .putBoolean("readyToHarvest", response.body()?.readyToHarvest!!)
-                                    .putString("encodedImage", response.body()?.encodedImage!!)
                                     .putBoolean("planted", response.body()?.planted!!)
                                     .commit()
                                 Log.i("setup", "go to game fragment - connected")

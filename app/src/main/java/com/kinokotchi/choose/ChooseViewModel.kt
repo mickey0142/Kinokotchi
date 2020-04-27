@@ -69,8 +69,8 @@ class ChooseViewModel : ViewModel() {
             Log.i("choose", "urlsString after remove is : " + urlsString)
             popupWindow.dismiss()
             // temporary comment this to test later
-//            sharedPref.edit().putString("names", namesString)
-//                .putString("urls", urlsString).commit()
+            sharedPref.edit().putString("names", namesString)
+                .putString("urls", urlsString).commit()
             _updateSignal.value = true
         }
 

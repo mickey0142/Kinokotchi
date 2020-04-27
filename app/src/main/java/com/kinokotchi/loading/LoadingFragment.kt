@@ -92,14 +92,13 @@ class LoadingFragment : Fragment() {
                                     .putBoolean("isFoodLow", response.body()?.isFoodLow!!)
                                     .putFloat("temperature", response.body()?.temperature!!.toFloat())
                                     .putBoolean("readyToHarvest", response.body()?.readyToHarvest!!)
-                                    .putString("encodedImage", response.body()?.encodedImage!!)
                                     .putBoolean("planted", response.body()?.planted!!)
                                     .commit()
                                 Log.i("loading", "go to game fragment - connected")
                                 viewModel.setIsComplete("game")
                                 findNavController().navigate(LoadingFragmentDirections.actionLoadingFragmentToGameFragment())
                             } else {
-                                sharedPref!!.edit().putBoolean("connected", false).commit()
+                                sharedPref.edit().putBoolean("connected", false).commit()
                                 showPopup(binding, inflater, "response code : ${response.code()}")
                                 viewModel.setIsComplete("game")
                                 Log.i("loading", "go to game fragment - can't connect")
@@ -113,12 +112,10 @@ class LoadingFragment : Fragment() {
                 // go to create char fragment
                 viewModel.setIsComplete("createchar")
                 findNavController().navigate(LoadingFragmentDirections.actionLoadingFragmentToCreatecharFragment())
-                Log.i("loading", "go to createchar fragment")
+                Log.i("loading", "mushroomName is empty! go to create char page")
             }
         } else {
-            viewModel.setIsComplete("setup")
-            findNavController().navigate(LoadingFragmentDirections.actionLoadingFragmentToSetupFragment())
-            Log.i("loading", "go to setup fragment")
+            Log.i("loading", "connectionUrl is empty!")
         }
 
         binding.setLifecycleOwner(this)
@@ -153,10 +150,16 @@ class LoadingFragment : Fragment() {
             popupWindow.exitTransition = slideOut
         }
 
+        popupWindow.setOutsideTouchable(true)
+        popupWindow.setFocusable(true)
+
+        popupWindow.setOnDismissListener {
+            findNavController().navigate(LoadingFragmentDirections.actionLoadingFragmentToGameFragment())
+        }
+
         val buttonPopup = view.findViewById<Button>(R.id.popup_loading_button)
         buttonPopup.setOnClickListener {
             popupWindow.dismiss()
-            findNavController().navigate(LoadingFragmentDirections.actionLoadingFragmentToGameFragment())
         }
 
         TransitionManager.beginDelayedTransition(binding.loadingRoot)

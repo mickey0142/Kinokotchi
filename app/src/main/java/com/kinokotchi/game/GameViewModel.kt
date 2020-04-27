@@ -95,10 +95,6 @@ class GameViewModel : ViewModel() {
     val refreshing: LiveData<Boolean>
         get() = _refreshing
 
-    private val _encodedImage = MutableLiveData<String>()
-    val encodedImage: LiveData<String>
-        get() = _encodedImage
-
     private val _restarting = MutableLiveData<Boolean>()
     val restarting: LiveData<Boolean>
         get() = _restarting
@@ -148,7 +144,6 @@ class GameViewModel : ViewModel() {
                         .putBoolean("foodLevel", response.body()?.isFoodLow!!)
                         .putFloat("temperature", response.body()?.temperature!!.toFloat())
                         .putBoolean("readyToHarvest", response.body()?.readyToHarvest!!)
-                        .putString("encodedImage", response.body()?.encodedImage!!)
                         .putBoolean("planted", response.body()?.planted!!)
                         .commit()
                     _lightStatus.value = response.body()?.light
@@ -157,7 +152,6 @@ class GameViewModel : ViewModel() {
                     _isFoodLow.value = response.body()?.isFoodLow
                     _temperature.value = response.body()?.temperature?.toFloat()
                     _readyToHarvest.value = response.body()?.readyToHarvest!!
-                    _encodedImage.value = response.body()?.encodedImage!!
                     _planted.value = response.body()?.planted!!
                     sharedPref.edit().putBoolean("connected", true).commit()
                 } else {
@@ -174,7 +168,7 @@ class GameViewModel : ViewModel() {
     }
 
     fun toggleLight(sharePref: SharedPreferences?, progressBar: View){
-        var status = 1
+        var status: Int
         if (sharePref?.getInt("lightStatus", 1) == 1) {
             status = 0
         } else {
@@ -210,7 +204,7 @@ class GameViewModel : ViewModel() {
     }
 
     fun toggleFan(sharePref: SharedPreferences?, progressBar: View) {
-        var status = 1
+        var status: Int
         if (sharePref?.getInt("fanStatus", 1) == 1) {
             status = 0
         } else {
@@ -302,7 +296,6 @@ class GameViewModel : ViewModel() {
         _isFoodLow.value = sharePref?.getBoolean("isFoodLow", false)
         _temperature.value = sharePref?.getFloat("temperature", -1.0F)
         _readyToHarvest.value = sharePref?.getBoolean("readyToHarvest", false)
-        _encodedImage.value = sharePref?.getString("encodedImage", "")
         _sleepiness.value = sharePref?.getInt("sleepiness", -1)
         _planted.value = sharePref?.getBoolean("planted", false)
         _restarting.value = false
@@ -334,7 +327,6 @@ class GameViewModel : ViewModel() {
                         .putBoolean("isFoodLow", response.body()?.isFoodLow!!)
                         .putFloat("temperature", response.body()?.temperature!!.toFloat())
                         .putBoolean("readyToHarvest", response.body()?.readyToHarvest!!)
-                        .putString("encodedImage", response.body()?.encodedImage!!)
                         .putBoolean("planted", response.body()?.planted!!)
                         .commit()
                     _lightStatus.value = response.body()?.light
@@ -343,7 +335,6 @@ class GameViewModel : ViewModel() {
                     _isFoodLow.value = response.body()?.isFoodLow
                     _temperature.value = response.body()?.temperature?.toFloat()
                     _readyToHarvest.value = response.body()?.readyToHarvest
-                    _encodedImage.value = response.body()?.encodedImage!!
                     _planted.value = response.body()?.planted!!
                     sharedPref.edit().putBoolean("connected", true).commit()
                 } else {
@@ -363,33 +354,6 @@ class GameViewModel : ViewModel() {
             _refreshing.value = false
             return _refreshing.value!!
         }
-    }
-
-    fun getPicture(sharedPref: SharedPreferences) {
-        PiApi.retrofitService.getImage().enqueue(object: Callback<EncodedImage> {
-            override fun onFailure(call: Call<EncodedImage>, t: Throwable) {
-                Log.i("game", "failure : " + t.message)
-            }
-
-            override fun onResponse(call: Call<EncodedImage>, response: Response<EncodedImage>) {
-                Log.i("game", "success : " + response.body() + " code : " + response.code())
-                if (response.code() == 200) {
-                    _isConnected.value = true
-                    sharedPref.edit().putString("encodedImage", response.body()?.encodedImage).commit()
-                    _encodedImage.value = response.body()?.encodedImage
-                }
-                else {
-                    _isConnected.value = false
-                }
-            }
-
-        })
-    }
-
-    fun updateKinokoHair(context: Context, imageView: ImageView) {
-        val decodedString = Base64.decode(encodedImage.value, Base64.DEFAULT)
-        val decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.size)
-        Glide.with(context).load(decodedByte).into(imageView)
     }
 
     fun showPopup(binding: FragmentGameBinding, inflater: LayoutInflater, text: String){
@@ -553,12 +517,7 @@ class GameViewModel : ViewModel() {
         }
     }
 
-    fun getDebugText() :String {
-        return "light: " + _lightStatus.value.toString() + " fan: " + _fanStatus.value.toString() +
-                "temperature: " + _temperature.value.toString() + "moisture: " + _moisture.value.toString()
-    }
-
-    fun getHair(context: Context, imageView: ImageView) {
+    fun getHair(context: Context, imageView: ImageView, imageView2: ImageView) {
         Log.i("game", "get hair called")
         var byteArray : ByteArray
         PiApi.retrofitService.getGif().enqueue(object: Callback<ResponseBody>{
@@ -576,11 +535,17 @@ class GameViewModel : ViewModel() {
                     {
                         byteArray = inp.readBytes()
                         // temporary comment this for debug hair remove this later
-//                        Glide.with(context)
-//                            .load(byteArray)
+                        Glide.with(context)
+                            .load(byteArray)
 //                            .error(R.drawable.alert_too_cold)
-//                            .into(imageView)
+                            .into(imageView)
+                        // load hair into kinoki restart hair too
+                        Glide.with(context)
+                            .load(byteArray)
+                            .into(imageView2)
                         Log.d("game", "set hair into view " + response.code())
+                    } else {
+                        Log.i("game", "set hair failed : response code : " + response.code())
                     }
                 }
 

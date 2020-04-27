@@ -57,7 +57,7 @@ class ChooseFragment : Fragment() {
             val namesCheck = sharedPref.getString("names", "")
             val urlsCheck = sharedPref.getString("urls", "")
             var isEmpty = false
-            if (namesCheck == "" || urlsCheck == "") {
+            if (urlsCheck == "") {
                 isEmpty = true
             }
             val names = namesCheck?.split(",")
@@ -69,12 +69,18 @@ class ChooseFragment : Fragment() {
                     val box = inflater.inflate(R.layout.box_info, container, false)
                     val url = urls.get(index)
                     // high possibility of bugs here. check value of name and url in case of weird behavior
-                    box.box_name.text = "Name : " + name
+                    var displayName = name
+                    if (name == "") {
+                        displayName = "-"
+                    }
+                    box.box_name.text = "Name : " + displayName
                     box.box_url.text = "URL : " + url
 
                     box.setOnClickListener {
                         sharedPref.edit().putString("mushroomName", name)
-                            .putString("connectionURL", url).commit()
+                            .putString("connectionURL", url)
+                            .putInt("boxIndex", index)
+                            .commit()
                         findNavController().navigate(ChooseFragmentDirections.actionChooseFragmentToLoadingFragment())
                     }
 

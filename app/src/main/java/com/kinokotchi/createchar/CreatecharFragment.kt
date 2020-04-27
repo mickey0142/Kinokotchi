@@ -75,7 +75,6 @@ class CreatecharFragment : Fragment() {
                                     .putBoolean("isFoodLow", response.body()?.isFoodLow!!)
                                     .putFloat("temperature", response.body()?.temperature!!.toFloat())
                                     .putBoolean("readyToHarvest", response.body()?.readyToHarvest!!)
-                                    .putString("encodedImage", response.body()?.encodedImage!!)
                                     .putBoolean("planted", response.body()?.planted!!)
                                     .commit()
                                 Log.i("create char", "go to game fragment - connected")
@@ -83,7 +82,7 @@ class CreatecharFragment : Fragment() {
                                 findNavController().navigate(CreatecharFragmentDirections.actionCreatecharFragmentToGameFragment())
                                 viewModel.doneNavigating()
                             } else {
-                                sharedPref!!.edit().putBoolean("connected", false).commit()
+                                sharedPref.edit().putBoolean("connected", false).commit()
                                 viewModel.setIsComplete("game")
                                 findNavController().navigate(CreatecharFragmentDirections.actionCreatecharFragmentToGameFragment())
                                 viewModel.doneNavigating()

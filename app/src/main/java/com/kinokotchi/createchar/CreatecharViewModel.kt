@@ -40,7 +40,18 @@ class CreatecharViewModel : ViewModel() {
 
         if (sharedPref != null && name != "")
         {
+            val index = sharedPref.getInt("boxIndex", -1)
+            val names = sharedPref.getString("names", "")
+            val namesList: MutableList<String>
+            if (names == "") {
+                namesList = mutableListOf(name)
+            } else {
+                namesList = names.split(",").toMutableList()
+            }
+            namesList.set(index, name)
+            val namesString = namesList.joinToString(",")
             sharedPref.edit().putString("mushroomName", name)
+                .putString("names", namesString)
                 .putInt("sleepiness", 100)
                 .commit()
             _navigateToGame.value = true

@@ -26,10 +26,11 @@ class NotiWorker(appContext: Context, workerParams: WorkerParameters)
 
         val sharedPreference = applicationContext.getSharedPreferences("Kinokotchi", Context.MODE_PRIVATE)
 
-        var getStatusSuccess = false
+        var getStatusSuccess: Boolean
 
         var piStatus: PiStatus?
 
+        // maybe add loop here
         val mushroomName = sharedPreference?.getString("mushroomName", "")
         val sleepiness = sharedPreference?.getInt("sleepiness", -1)
 

@@ -85,8 +85,28 @@ class SetupViewModel : ViewModel() {
                     Log.i("setup", "in confirmClicked : sharepref = " + sharedPref)
                     if (sharedPref != null)
                     {
-                        sharedPref.edit().putBoolean("connected", true).commit()
-                        sharedPref.edit().putString("connectionURL", url).commit()
+                        val urls = sharedPref.getString("urls", "")
+                        val urlsList: MutableList<String>
+                        val names = sharedPref.getString("names", "")
+                        val namesList: MutableList<String>
+                        if (urls != "") {
+                            urlsList = urls.split(",").toMutableList()
+                            urlsList.add(url)
+                            namesList = names.split(",").toMutableList()
+                            namesList.add("-")
+                        } else {
+                            urlsList = mutableListOf(url)
+                            namesList = mutableListOf("-")
+                        }
+                        val urlsString = urlsList.joinToString(",")
+                        val namesString = namesList.joinToString(",")
+                        val index = namesList.size - 1
+                        sharedPref.edit().putBoolean("connected", true)
+                            .putString("connectionURL", url)
+                            .putString("urls", urlsString)
+                            .putString("names", namesString)
+                            .putInt("boxIndex", index)
+                            .commit()
                         _navigateToCreateChar.value = true
                     } else {
                         Log.i("setup", "sharedPreferences is null")

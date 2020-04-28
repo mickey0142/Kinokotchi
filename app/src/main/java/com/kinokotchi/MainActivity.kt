@@ -3,7 +3,7 @@ package com.kinokotchi
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
-import android.content.SharedPreferences
+import android.media.MediaPlayer
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -14,14 +14,38 @@ import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
 
+    internal lateinit var player: MediaPlayer
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+
+        player = MediaPlayer.create(applicationContext, R.raw.eight_bit_menu)
+        player.isLooping = true
+        player.setVolume(100f, 100f)
+        player.start()
 
         createNotificationChannel()
 
         // maybe move this into on destroy or on pause
                 setupNotification()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        player.stop()
+        player.release()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        player.pause()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        player.start()
     }
 
     private fun createNotificationChannel() {

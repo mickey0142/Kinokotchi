@@ -3,6 +3,7 @@ package com.kinokotchi.game
 import android.animation.Animator
 import android.content.Context
 import android.graphics.Color
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -32,6 +33,14 @@ class GameFragment : Fragment() {
         ViewModelProviders.of(this).get(GameViewModel::class.java)
     }
 
+    internal lateinit var buttonPlayer: MediaPlayer
+    internal lateinit var planePlayer: MediaPlayer
+    internal lateinit var eatPlayer: MediaPlayer
+    internal lateinit var fanPlayer: MediaPlayer
+    internal lateinit var lightPlayer: MediaPlayer
+    internal lateinit var waterPlayer: MediaPlayer
+    internal lateinit var colaPlayer: MediaPlayer
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
@@ -41,6 +50,14 @@ class GameFragment : Fragment() {
 
         val sharedPref =  context?.getSharedPreferences("Kinokotchi", Context.MODE_PRIVATE)
         binding.gameMushroomName.text = sharedPref?.getString("mushroomName", "no name")
+
+        buttonPlayer = MediaPlayer.create(context, R.raw.chop)
+        planePlayer = MediaPlayer.create(context, R.raw.airplane_landing)
+        eatPlayer = MediaPlayer.create(context, R.raw.eating)
+        fanPlayer = MediaPlayer.create(context, R.raw.freezer_unit_drone)
+        lightPlayer = MediaPlayer.create(context, R.raw.metal_latch)
+        waterPlayer = MediaPlayer.create(context, R.raw.slurping)
+        colaPlayer = MediaPlayer.create(context, R.raw.straw_slurp)
 
         var foodAnimationResource = -1
 
@@ -55,17 +72,20 @@ class GameFragment : Fragment() {
 //        viewModel.setupAPIUrl(sharedPreference)
 
         binding.gameReconnectButton.setOnClickListener {
+            buttonPlayer.start()
             viewModel.reconnect(sharedPref!!, binding.gameReconnectProgress, binding.gameReconnectButton)
             binding.gameReconnectProgress.visibility = View.VISIBLE
         }
 
         binding.gameLightButton.setOnClickListener {
-//            binding.gameMiddlePanel.setBackgroundResource(R.drawable.box)
+            // if "it" is gameLightButton this should work
+            if (it.isEnabled) buttonPlayer.start()
             viewModel.toggleLight(sharedPref, binding.gameRefreshProgress)
         }
 
         // set background here
         viewModel.lightStatus.observe(this, Observer { lightStatus ->
+            lightPlayer.start()
             if (lightStatus == 1) {
                 if (viewModel.fanStatus.value == 1) {
                     binding.gameBackground2.setImageResource(R.drawable.bg_morning_fan)
@@ -83,11 +103,13 @@ class GameFragment : Fragment() {
         })
 
         binding.gameFanButton.setOnClickListener {
+            if (it.isEnabled) buttonPlayer.start()
             viewModel.toggleFan(sharedPref, binding.gameRefreshProgress)
         }
 
         viewModel.fanStatus.observe(this, Observer { fanStatus ->
             if (fanStatus == 1) {
+                fanPlayer.start()
                 if (viewModel.lightStatus.value == 1) {
                     binding.gameBackground2.setImageResource(R.drawable.bg_morning_fan)
                 } else {
@@ -163,6 +185,7 @@ class GameFragment : Fragment() {
         })
 
         binding.gameFeedButton.setOnClickListener {
+            if (it.isEnabled) buttonPlayer.start()
             if (binding.gameFoodSelection.visibility == View.GONE) {
                 viewModel.initFoodChoice()
                 binding.gameFoodSelection.visibility = View.VISIBLE
@@ -172,6 +195,7 @@ class GameFragment : Fragment() {
         }
 
         binding.gameFoodYes.setOnClickListener {
+            buttonPlayer.start()
             viewModel.feed()
             binding.gameFeedProgressbar.visibility = View.VISIBLE
             binding.gameFoodYes.visibility = View.GONE
@@ -182,14 +206,17 @@ class GameFragment : Fragment() {
         }
 
         binding.gameFoodNo.setOnClickListener {
+            buttonPlayer.start()
             binding.gameFoodSelection.visibility = View.GONE
         }
 
         binding.gameFoodLeft.setOnClickListener {
+            buttonPlayer.start()
             viewModel.changeFood(-1)
         }
 
         binding.gameFoodRight.setOnClickListener {
+            buttonPlayer.start()
             viewModel.changeFood(1)
         }
 
@@ -272,6 +299,16 @@ class GameFragment : Fragment() {
 
                             override fun onAnimationStart(animation: Animator?) {
                                 binding.gameEatingAnimationPanel.visibility = View.VISIBLE
+                                if (foodAnimationResource == R.drawable.water_anim) {
+                                    waterPlayer.start()
+                                } else if (foodAnimationResource == R.drawable.cola_anim) {
+                                    colaPlayer.start()
+                                } else if (foodAnimationResource == R.drawable.apple_anim ||
+                                        foodAnimationResource == R.drawable.burger_anim ||
+                                        foodAnimationResource == R.drawable.melon_anim ||
+                                        foodAnimationResource == R.drawable.rice_anim) {
+                                    eatPlayer.start()
+                                }
                             }
                         }).start()
                 }
@@ -283,7 +320,7 @@ class GameFragment : Fragment() {
             binding.gameReconnectButton.visibility = View.VISIBLE
 
             // temporary add ! to this if to debug without raspberry pi
-            if (isConnected) {
+            if (!isConnected) {
                 if (context != null)
                 {
                     viewModel.getHair(context, binding.gameKinokoHair, binding.gameKinokoHairRestart)
@@ -340,7 +377,30 @@ class GameFragment : Fragment() {
                 binding.gameRestartPanel.visibility = View.VISIBLE
                 binding.gameKinokoRestart.setImageResource(R.drawable.character_wave)
                 binding.gameKinokoRestart.animate().alpha(0f).setDuration(2200).start()
-                binding.gameKinokoHairRestart.animate().alpha(0f).setDuration(2200).start()
+                binding.gameKinokoHairRestart.animate().alpha(0f).setDuration(2200)
+                    .setListener(object: Animator.AnimatorListener{
+                        override fun onAnimationRepeat(animation: Animator?) {
+                        }
+
+                        override fun onAnimationEnd(animation: Animator?, isReverse: Boolean) {
+                            super.onAnimationEnd(animation, isReverse)
+                        }
+
+                        override fun onAnimationEnd(animation: Animator?) {
+                            planePlayer.start()
+                        }
+
+                        override fun onAnimationCancel(animation: Animator?) {
+                        }
+
+                        override fun onAnimationStart(animation: Animator?, isReverse: Boolean) {
+                            super.onAnimationStart(animation, isReverse)
+                        }
+
+                        override fun onAnimationStart(animation: Animator?) {
+                        }
+                    })
+                    .start()
                 binding.gameRestartAnimation.setImageResource(R.drawable.restart_anim)
                 binding.gameRestartAnimation.animate().setStartDelay(9800) // change this duration to gif duration
                     .alpha(1.0f).setDuration(1)
@@ -371,7 +431,7 @@ class GameFragment : Fragment() {
         })
         
         binding.gameRestartButton.setOnClickListener {
-            // show popup to restart game here
+            buttonPlayer.start()
             viewModel.showRestartPopup(binding, inflater)
         }
 
@@ -473,5 +533,30 @@ class GameFragment : Fragment() {
                 binding.gameKinoko.setImageResource(R.drawable.character_sleeping)
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (buttonPlayer.isPlaying) buttonPlayer.stop()
+        buttonPlayer.reset()
+        buttonPlayer.release()
+        if (planePlayer.isPlaying) planePlayer.stop()
+        planePlayer.reset()
+        planePlayer.release()
+        if (eatPlayer.isPlaying) eatPlayer.stop()
+        eatPlayer.reset()
+        eatPlayer.release()
+        if (fanPlayer.isPlaying) fanPlayer.stop()
+        fanPlayer.reset()
+        fanPlayer.release()
+        if (lightPlayer.isPlaying) lightPlayer.stop()
+        lightPlayer.reset()
+        lightPlayer.release()
+        if (waterPlayer.isPlaying) waterPlayer.stop()
+        waterPlayer.reset()
+        waterPlayer.release()
+        if (colaPlayer.isPlaying) colaPlayer.stop()
+        colaPlayer.reset()
+        colaPlayer.release()
     }
 }

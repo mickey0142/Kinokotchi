@@ -2,6 +2,7 @@ package com.kinokotchi.setup
 
 import android.content.SharedPreferences
 import android.graphics.drawable.ColorDrawable
+import android.media.MediaPlayer
 import android.os.Build
 import android.transition.Slide
 import android.transition.TransitionManager
@@ -60,7 +61,7 @@ class SetupViewModel : ViewModel() {
     }
 
     fun confirmClicked(url: String, sharedPref: SharedPreferences?,
-                       binding: FragmentSetupBinding, inflater: LayoutInflater) {
+                       binding: FragmentSetupBinding, inflater: LayoutInflater, buttonPlayer: MediaPlayer) {
         // send api request to raspberry pi to check for response before changing this to true and
         // add url to sharedPreferences
         _loading.value = true
@@ -75,7 +76,7 @@ class SetupViewModel : ViewModel() {
                 override fun onFailure(call: Call<ConnectionResponse>, t: Throwable) {
                     Log.i("setup", "failure : " + t.message)
                     _loading.value = false
-                    showPopup(binding, inflater, "can't connect. check your url and internet connection")
+                    showPopup(binding, inflater, "can't connect. check your url and internet connection", buttonPlayer)
                 }
 
                 override fun onResponse(call: Call<ConnectionResponse>, response: Response<ConnectionResponse>) {
@@ -115,16 +116,16 @@ class SetupViewModel : ViewModel() {
             })
         } catch (e: IllegalArgumentException) {
             _loading.value = false
-            showPopup(binding, inflater, "invalid url")
+            showPopup(binding, inflater, "invalid url", buttonPlayer)
         } catch (e: ExceptionInInitializerError) {
             _loading.value = false
-            showPopup(binding, inflater, "please enter url")
+            showPopup(binding, inflater, "please enter url", buttonPlayer)
         } catch (e: Exception) {
             _loading.value = false
-            showPopup(binding, inflater, "unexpected exception occured")
+            showPopup(binding, inflater, "unexpected exception occured", buttonPlayer)
         }
     }
-    private fun showPopup(binding: FragmentSetupBinding, inflater: LayoutInflater, message: String){
+    private fun showPopup(binding: FragmentSetupBinding, inflater: LayoutInflater, message: String, buttonPlayer: MediaPlayer){
         val view = inflater.inflate(R.layout.popup_setup,null)
 
         val textView = view.findViewById<TextView>(R.id.popup_setup_text)
@@ -155,6 +156,7 @@ class SetupViewModel : ViewModel() {
 
         val buttonPopup = view.findViewById<Button>(R.id.popup_setup_button)
         buttonPopup.setOnClickListener {
+            buttonPlayer.start()
             popupWindow.dismiss()
         }
 

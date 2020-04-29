@@ -2,6 +2,7 @@ package com.kinokotchi.choose
 
 import android.content.SharedPreferences
 import android.graphics.drawable.ColorDrawable
+import android.media.MediaPlayer
 import android.os.Build
 import android.transition.Slide
 import android.transition.TransitionManager
@@ -27,7 +28,7 @@ class ChooseViewModel : ViewModel() {
         _updateSignal.value = false
     }
 
-    fun showPopup(binding: FragmentChooseBinding, inflater: LayoutInflater, sharedPref: SharedPreferences, names: List<String>, urls: List<String>, index: Int) {
+    fun showPopup(binding: FragmentChooseBinding, inflater: LayoutInflater, sharedPref: SharedPreferences, names: List<String>, urls: List<String>, index: Int, buttonPlayer: MediaPlayer) {
         val view = inflater.inflate(R.layout.popup_box_remove,null)
 
         val popupWindow = PopupWindow(
@@ -56,6 +57,7 @@ class ChooseViewModel : ViewModel() {
         popupWindow.isOutsideTouchable = true
 
         view.popup_box_remove_yes.setOnClickListener {
+            buttonPlayer.start()
             val newNames = names.toMutableList()
             val newUrls = urls.toMutableList()
             // uses of index here have high risk of bugs in case of multiple box is present
@@ -67,14 +69,14 @@ class ChooseViewModel : ViewModel() {
             val urlsString = newUrls.joinToString(",")
             Log.i("choose", "namesString after remove is : " + namesString)
             Log.i("choose", "urlsString after remove is : " + urlsString)
-            popupWindow.dismiss()
-            // temporary comment this to test later
             sharedPref.edit().putString("names", namesString)
                 .putString("urls", urlsString).commit()
             _updateSignal.value = true
+            popupWindow.dismiss()
         }
 
         view.popup_box_remove_no.setOnClickListener {
+            buttonPlayer.start()
             popupWindow.dismiss()
         }
 

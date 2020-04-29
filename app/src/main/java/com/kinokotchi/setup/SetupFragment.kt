@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
+import android.media.MediaPlayer
 import android.os.Build
 import android.os.Bundle
 import android.transition.Slide
@@ -39,6 +40,8 @@ class SetupFragment : Fragment() {
         ViewModelProviders.of(this).get(SetupViewModel::class.java)
     }
 
+    internal lateinit var buttonPlayer: MediaPlayer
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
@@ -49,6 +52,8 @@ class SetupFragment : Fragment() {
         val sharedPref = context?.getSharedPreferences("Kinokotchi", Context.MODE_PRIVATE)
 
         binding.viewModel = viewModel
+
+        buttonPlayer = MediaPlayer.create(context, R.raw.chop)
 
         binding.setLifecycleOwner(this)
 
@@ -101,10 +106,18 @@ class SetupFragment : Fragment() {
         })
 
         binding.setupConnectButton.setOnClickListener {
+            buttonPlayer.start()
             viewModel.confirmClicked(binding.setupConnectionUrl.text.toString(), sharedPref,
-                binding, inflater)
+                binding, inflater, buttonPlayer)
         }
 
         return binding.root
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (buttonPlayer.isPlaying) buttonPlayer.stop()
+        buttonPlayer.reset()
+        buttonPlayer.release()
     }
 }

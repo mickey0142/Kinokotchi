@@ -3,6 +3,7 @@ package com.kinokotchi.loading
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.media.MediaPlayer
 import android.os.Build
 import android.os.Bundle
 import android.transition.Slide
@@ -46,6 +47,8 @@ class LoadingFragment : Fragment() {
         ViewModelProviders.of(this).get(LoadingViewModel::class.java)
     }
 
+    internal lateinit var buttonPlayer: MediaPlayer
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val binding: FragmentLoadingBinding = DataBindingUtil.inflate(
@@ -60,6 +63,8 @@ class LoadingFragment : Fragment() {
         }
 
         binding.viewModel = viewModel
+
+        buttonPlayer = MediaPlayer.create(context, R.raw.chop)
 
         // refactor by moving all this to viewmodel later
         val connectionUrl = sharedPref?.getString("connectionURL", "")
@@ -159,6 +164,7 @@ class LoadingFragment : Fragment() {
 
         val buttonPopup = view.findViewById<Button>(R.id.popup_loading_button)
         buttonPopup.setOnClickListener {
+            buttonPlayer.start()
             popupWindow.dismiss()
         }
 
@@ -182,5 +188,12 @@ class LoadingFragment : Fragment() {
         } else if (destination == "setup") {
             findNavController().navigate(LoadingFragmentDirections.actionLoadingFragmentToSetupFragment())
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (buttonPlayer.isPlaying) buttonPlayer.stop()
+        buttonPlayer.reset()
+        buttonPlayer.release()
     }
 }

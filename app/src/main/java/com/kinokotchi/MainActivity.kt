@@ -34,13 +34,14 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        player.stop()
+        if (player.isPlaying) player.stop()
+        player.reset()
         player.release()
     }
 
     override fun onPause() {
         super.onPause()
-        player.pause()
+        if (player.isPlaying) player.pause()
     }
 
     override fun onResume() {

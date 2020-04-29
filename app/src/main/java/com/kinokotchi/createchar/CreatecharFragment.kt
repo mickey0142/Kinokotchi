@@ -2,6 +2,7 @@ package com.kinokotchi.createchar
 
 import android.content.Context
 import android.graphics.drawable.ColorDrawable
+import android.media.MediaPlayer
 import android.os.Build
 import android.os.Bundle
 import android.transition.Slide
@@ -37,6 +38,8 @@ class CreatecharFragment : Fragment() {
         ViewModelProviders.of(this).get(CreatecharViewModel::class.java)
     }
 
+    internal lateinit var buttonPlayer: MediaPlayer
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
@@ -45,6 +48,8 @@ class CreatecharFragment : Fragment() {
             inflater, R.layout.fragment_createchar, container, false)
 
         binding.viewModel = viewModel
+
+        buttonPlayer = MediaPlayer.create(context, R.raw.chop)
 
         val sharedPref =  context?.getSharedPreferences("Kinokotchi", Context.MODE_PRIVATE)
 
@@ -97,6 +102,7 @@ class CreatecharFragment : Fragment() {
         })
 
         binding.createcharCreateButton.setOnClickListener {
+            buttonPlayer.start()
             if (binding.createcharName.text.toString() == "") {
                 showPopup(binding, inflater)
             } else {
@@ -134,6 +140,7 @@ class CreatecharFragment : Fragment() {
 
         val buttonPopup = view.findViewById<Button>(R.id.popup_create_char_button)
         buttonPopup.setOnClickListener {
+            buttonPlayer.start()
             popupWindow.dismiss()
         }
 
@@ -157,5 +164,12 @@ class CreatecharFragment : Fragment() {
             findNavController().navigate(CreatecharFragmentDirections.actionCreatecharFragmentToGameFragment())
             viewModel.doneNavigating()
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (buttonPlayer.isPlaying) buttonPlayer.stop()
+        buttonPlayer.reset()
+        buttonPlayer.release()
     }
 }

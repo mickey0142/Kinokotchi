@@ -2,6 +2,7 @@ package com.kinokotchi.choose
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -22,6 +23,8 @@ class ChooseFragment : Fragment() {
         ViewModelProviders.of(this).get(ChooseViewModel::class.java)
     }
 
+    internal lateinit var buttonPlayer: MediaPlayer
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
@@ -33,17 +36,22 @@ class ChooseFragment : Fragment() {
         val sharedPref = context?.getSharedPreferences("Kinokotchi", Context.MODE_PRIVATE)
         binding.viewModel = viewModel
 
+        buttonPlayer = MediaPlayer.create(context, R.raw.chop)
+
         viewModel.resetUpdateSignal()
 
         updateBoxList(sharedPref, inflater, container, binding)
 
         viewModel.updateSignal.observe(this, Observer { updateSignal ->
             if (updateSignal) {
+                Log.i("choose", "updateSignal is true calling updateBoxList")
                 updateBoxList(sharedPref, inflater, container, binding)
             }
         })
 
         binding.chooseAddBox.setOnClickListener {
+            buttonPlayer.start()
+            Log.i("choose", "click button play sound")
             findNavController().navigate(ChooseFragmentDirections.actionChooseFragmentToSetupFragment())
         }
 
@@ -53,6 +61,7 @@ class ChooseFragment : Fragment() {
     }
 
     private fun updateBoxList(sharedPref: SharedPreferences?, inflater: LayoutInflater, container: ViewGroup?, binding: FragmentChooseBinding) {
+        viewModel.resetUpdateSignal()
         if (sharedPref != null) {
             val namesCheck = sharedPref.getString("names", "")
             val urlsCheck = sharedPref.getString("urls", "")
@@ -77,6 +86,7 @@ class ChooseFragment : Fragment() {
                     box.box_url.text = "URL : " + url
 
                     box.setOnClickListener {
+                        buttonPlayer.start()
                         sharedPref.edit().putString("mushroomName", name)
                             .putString("connectionURL", url)
                             .putInt("boxIndex", index)
@@ -85,8 +95,8 @@ class ChooseFragment : Fragment() {
                     }
 
                     box.box_remove_button.setOnClickListener {
-                        viewModel.showPopup(binding, inflater, sharedPref, names, urls, index)
-                        viewModel.resetUpdateSignal()
+                        buttonPlayer.start()
+                        viewModel.showPopup(binding, inflater, sharedPref, names, urls, index, buttonPlayer)
                     }
 
                     binding.chooseList.addView(box)
@@ -94,5 +104,12 @@ class ChooseFragment : Fragment() {
                 }
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (buttonPlayer.isPlaying) buttonPlayer.stop()
+        buttonPlayer.reset()
+        buttonPlayer.release()
     }
 }

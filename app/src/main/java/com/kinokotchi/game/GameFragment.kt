@@ -441,8 +441,6 @@ class GameFragment : Fragment() {
             {
                 if (sharedPref != null) {
                     viewModel.refreshData(sharedPref, binding.gameRefreshProgress)
-//                    binding.tempGif.setImageURI("https://buffer.com/resources/wp-content/uploads/2016/06/giphy.gif")
-
                 }
             }
         }

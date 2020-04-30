@@ -137,12 +137,24 @@ class GameViewModel : ViewModel() {
                 Log.i("game", "in confirmClicked : sharepref = " + sharedPref)
                 if (response.code() == 200) {
                     _isConnected.value = true
+                    val temperatureSet : Float
+                    if (response.body()?.temperature!!.toFloat() == -1f) {
+                        val savedValue = _temperature.value
+                        if (savedValue != null) {
+                            temperatureSet = savedValue
+                        } else {
+                            temperatureSet = 25f
+                        }
+                    }
+                    else {
+                        temperatureSet = response.body()?.temperature!!.toFloat()
+                    }
                     sharedPref.edit().putBoolean("connected", true)
                         .putInt("lightStatus", response.body()?.light!!)
                         .putInt("fanStatus", response.body()?.fan!!)
                         .putFloat("moisture", response.body()?.moisture!!.toFloat())
                         .putBoolean("foodLevel", response.body()?.isFoodLow!!)
-                        .putFloat("temperature", response.body()?.temperature!!.toFloat())
+                        .putFloat("temperature", temperatureSet)
                         .putBoolean("readyToHarvest", response.body()?.readyToHarvest!!)
                         .putBoolean("planted", response.body()?.planted!!)
                         .commit()
@@ -150,7 +162,7 @@ class GameViewModel : ViewModel() {
                     _fanStatus.value = response.body()?.fan
                     _moisture.value = response.body()?.moisture?.toFloat()
                     _isFoodLow.value = response.body()?.isFoodLow
-                    _temperature.value = response.body()?.temperature?.toFloat()
+                    _temperature.value = temperatureSet
                     _readyToHarvest.value = response.body()?.readyToHarvest!!
                     _planted.value = response.body()?.planted!!
                     sharedPref.edit().putBoolean("connected", true).commit()
@@ -294,10 +306,10 @@ class GameViewModel : ViewModel() {
         _fanStatus.value = sharePref?.getInt("fanStatus", 0)
         _moisture.value = sharePref?.getFloat("moisture", -1.0F)
         _isFoodLow.value = sharePref?.getBoolean("isFoodLow", false)
-        _temperature.value = sharePref?.getFloat("temperature", -1.0F)
+        _temperature.value = sharePref?.getFloat("temperature", 25F)
         _readyToHarvest.value = sharePref?.getBoolean("readyToHarvest", false)
         _sleepiness.value = sharePref?.getInt("sleepiness", -1)
-        _planted.value = sharePref?.getBoolean("planted", false)
+        _planted.value = sharePref?.getBoolean("planted", true)
         _restarting.value = false
     }
 
@@ -320,12 +332,24 @@ class GameViewModel : ViewModel() {
                 progressBar.visibility = View.GONE
                 if (response.code() == 200) {
                     _isConnected.value = true
+                    val temperatureSet : Float
+                    if (response.body()?.temperature!!.toFloat() == -1f) {
+                        val savedValue = _temperature.value
+                        if (savedValue != null) {
+                            temperatureSet = savedValue
+                        } else {
+                            temperatureSet = 25f
+                        }
+                    }
+                    else {
+                        temperatureSet = response.body()?.temperature!!.toFloat()
+                    }
                     sharedPref.edit().putBoolean("connected", true)
                         .putInt("lightStatus", response.body()?.light!!)
                         .putInt("fanStatus", response.body()?.fan!!)
                         .putFloat("moisture", response.body()?.moisture!!.toFloat())
                         .putBoolean("isFoodLow", response.body()?.isFoodLow!!)
-                        .putFloat("temperature", response.body()?.temperature!!.toFloat())
+                        .putFloat("temperature", temperatureSet)
                         .putBoolean("readyToHarvest", response.body()?.readyToHarvest!!)
                         .putBoolean("planted", response.body()?.planted!!)
                         .commit()
@@ -333,7 +357,7 @@ class GameViewModel : ViewModel() {
                     _fanStatus.value = response.body()?.fan
                     _moisture.value = response.body()?.moisture?.toFloat()
                     _isFoodLow.value = response.body()?.isFoodLow
-                    _temperature.value = response.body()?.temperature?.toFloat()
+                    _temperature.value = temperatureSet
                     _readyToHarvest.value = response.body()?.readyToHarvest
                     _planted.value = response.body()?.planted!!
                     sharedPref.edit().putBoolean("connected", true).commit()
@@ -520,37 +544,51 @@ class GameViewModel : ViewModel() {
     fun getHair(context: Context, imageView: ImageView, imageView2: ImageView) {
         Log.i("game", "get hair called")
         var byteArray : ByteArray
-        PiApi.retrofitService.getGif().enqueue(object: Callback<ResponseBody>{
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                Log.i("game", "get hair fail" + t.message)
+        PiApi.retrofitService.updateGif().enqueue(object: Callback<ConnectionResponse>{
+            override fun onFailure(call: Call<ConnectionResponse>, t: Throwable) {
+                Log.i("game", "update gif fail : " + t.message)
             }
 
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                Log.i("game", "get hair success" + response.body())
-                val body = response.body()
-                if (body?.byteStream() != null)
-                {
-                    val inp : InputStream = body.byteStream()
-                    if (response.code() == 200)
-                    {
-                        byteArray = inp.readBytes()
-                        // temporary comment this for debug hair remove this later
-                        Glide.with(context)
-                            .load(byteArray)
-//                            .error(R.drawable.alert_too_cold)
-                            .into(imageView)
-                        // load hair into kinoki restart hair too
-                        Glide.with(context)
-                            .load(byteArray)
-                            .into(imageView2)
-                        Log.d("game", "set hair into view " + response.code())
-                    } else {
-                        Log.i("game", "set hair failed : response code : " + response.code())
-                    }
-                }
+            override fun onResponse(
+                call: Call<ConnectionResponse>,
+                response: Response<ConnectionResponse>
+            ) {
+                Log.i("game", "update gif success : " + response.body())
 
+                PiApi.retrofitService.getGif().enqueue(object: Callback<ResponseBody>{
+                    override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                        Log.i("game", "get hair fail : " + t.message)
+                    }
+
+                    override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                        Log.i("game", "get hair success" + response.body())
+                        val body = response.body()
+                        if (body?.byteStream() != null)
+                        {
+                            val inp : InputStream = body.byteStream()
+                            if (response.code() == 200)
+                            {
+                                byteArray = inp.readBytes()
+                                // temporary comment this for debug hair remove this later
+                                Glide.with(context)
+                                    .load(byteArray)
+//                            .error(R.drawable.alert_too_cold)
+                                    .into(imageView)
+                                // load hair into kinoki restart hair too
+                                Glide.with(context)
+                                    .load(byteArray)
+                                    .into(imageView2)
+                                Log.d("game", "set hair into view " + response.code())
+                            } else {
+                                Log.i("game", "set hair failed : response code : " + response.code())
+                            }
+                        }
+
+                    }
+                })
             }
         })
+
     }
 
     fun tempDebugSetTemp() {

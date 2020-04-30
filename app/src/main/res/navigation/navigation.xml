@@ -61,5 +61,12 @@
             android:id="@+id/action_chooseFragment_to_setupFragment"
             app:destination="@+id/setupFragment"
             app:popUpToInclusive="false" />
+        <action
+            android:id="@+id/action_chooseFragment_to_creditFragment"
+            app:destination="@id/creditFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/creditFragment"
+        android:name="com.kinokotchi.credit.CreditFragment"
+        android:label="CreditFragment" />
 </navigation>

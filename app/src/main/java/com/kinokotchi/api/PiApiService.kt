@@ -63,6 +63,12 @@ interface PiApiService {
 
     @GET("/gif/")
     fun getGif() : Call<ResponseBody>
+
+    @GET("/updateGif/")
+    fun updateGif() : Call<ConnectionResponse>
+
+    @GET("/setUpImage/")
+    fun setupImage() : Call<ConnectionResponse>
 }
 
 object PiApi {

@@ -2,6 +2,7 @@ package com.kinokotchi.choose
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.graphics.Paint
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.util.Log
@@ -38,6 +39,8 @@ class ChooseFragment : Fragment() {
 
         buttonPlayer = MediaPlayer.create(context, R.raw.chop)
 
+        binding.chooseCredit.paintFlags = Paint.UNDERLINE_TEXT_FLAG
+
         viewModel.resetUpdateSignal()
 
         updateBoxList(sharedPref, inflater, container, binding)
@@ -53,6 +56,10 @@ class ChooseFragment : Fragment() {
             buttonPlayer.start()
             Log.i("choose", "click button play sound")
             findNavController().navigate(ChooseFragmentDirections.actionChooseFragmentToSetupFragment())
+        }
+
+        binding.chooseCredit.setOnClickListener{
+            findNavController().navigate(ChooseFragmentDirections.actionChooseFragmentToCreditFragment())
         }
 
         binding.setLifecycleOwner(this)

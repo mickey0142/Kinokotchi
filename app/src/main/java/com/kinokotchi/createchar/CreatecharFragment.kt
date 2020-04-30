@@ -22,6 +22,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import com.kinokotchi.R
+import com.kinokotchi.api.ConnectionResponse
 import com.kinokotchi.api.PiApi
 import com.kinokotchi.api.PiStatus
 import com.kinokotchi.databinding.FragmentCreatecharBinding
@@ -96,6 +97,19 @@ class CreatecharFragment : Fragment() {
                         } else {
                             Log.i("create char", "sharedPreferences is null")
                         }
+                    }
+                })
+                PiApi.retrofitService.setupImage().enqueue(object: Callback<ConnectionResponse>{
+                    override fun onFailure(call: Call<ConnectionResponse>, t: Throwable) {
+                        Log.i("create char", "setup image failure : " + t.message)
+                        // maybe do something here and setup again
+                    }
+
+                    override fun onResponse(
+                        call: Call<ConnectionResponse>,
+                        response: Response<ConnectionResponse>
+                    ) {
+                        Log.i("create char", "setup iamge success : " + response.body() + " code : " + response.code())
                     }
                 })
             }

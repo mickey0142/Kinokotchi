@@ -26,5 +26,28 @@
     <string name="enter_name">Enter your Kinoko\'s name here</string>
     <string name="createchar_instruction_text">Put mushroom in and close the box first !</string>
     <string name="restart_instruction">You can take mushroom out of box now</string>
+    <string name="credits">Credits</string>
+    <string name="credit_list">
+        Airplane Landing\n
+        Created by : Daniel Simion\n
+        URL : http://soundbible.com/2219-Airplane-Landing-Airport.html\n\n
+        Slurping 2\n
+        Created by : fille1000\n
+        URL : http://soundbible.com/1502-Slurping-2.html\n\n
+        Straw Slurp\n
+        Created by : Mike Koenig\n
+        URL : http://soundbible.com/1533-Straw-Slurp.html\n\n
+        Eating\n
+        Created by : Caroline Ford\n
+        URL : http://soundbible.com/976-Eating.html\n\n
+        Freezer Unit Drone\n
+        Created by : Squared Glasses\n
+        URL : https://www.dropbox.com/sh/vjfpdatykqal54l/AADojuKap0qKJ1ozjXXvN4Pfa?dl=0&amp;preview=Freezer+Unit+Drone+1.mp3\n\n
+        8 Bit Menu\n
+        Created by : David Renda\n
+        URL : https://www.fesliyanstudios.com/royalty-free-music/download/8-bit-menu/287\n\n
+        Chop, metal Latch\n
+        Created by : Kenney Assets\n
+        URL : www.kenney.nl\n\n</string>
 
 </resources>

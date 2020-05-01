@@ -1,6 +1,8 @@
 package com.kinokotchi.setup
 
 import android.Manifest
+import android.app.Activity
+import android.app.usage.UsageEvents
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
@@ -9,11 +11,14 @@ import android.os.Build
 import android.os.Bundle
 import android.transition.Slide
 import android.transition.TransitionManager
+import android.util.EventLog
 import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.PopupWindow
@@ -59,41 +64,9 @@ class SetupFragment : Fragment() {
 
         viewModel.navigateToCreateChar.observe(this, Observer {hasFinished ->
             if(hasFinished){
-                PiApi.retrofitService.getAllStatus().enqueue(object: Callback<PiStatus> {
-                    override fun onFailure(call: Call<PiStatus>, t: Throwable) {
-                        Log.i("setup", "failure : " + t.message)
-                        // go to game fragment without connection
-                        sharedPref!!.edit().putBoolean("connected", false).commit()
-                        Log.i("setup", "go to game fragment - can't connect")
-                    }
-
-                    override fun onResponse(call: Call<PiStatus>, response: Response<PiStatus>) {
-                        Log.i("setup", "success : " + response.body() + " code : " + response.code())
-
-                        Log.i("setup", "sharepref = " + sharedPref)
-                        if (sharedPref != null)
-                        {
-                            if (response.code() == 200) {
-                                // go to game normally with connection
-                                sharedPref.edit().putBoolean("connected", true)
-                                    .putInt("lightStatus", response.body()?.light!!)
-                                    .putInt("fanStatus", response.body()?.fan!!)
-                                    .putFloat("moisture", response.body()?.moisture!!.toFloat())
-                                    .putBoolean("isFoodLow", response.body()?.isFoodLow!!)
-                                    .putFloat("temperature", response.body()?.temperature!!.toFloat())
-                                    .putBoolean("readyToHarvest", response.body()?.readyToHarvest!!)
-                                    .putBoolean("planted", response.body()?.planted!!)
-                                    .commit()
-                                Log.i("setup", "go to game fragment - connected")
-                                viewModel.setIsComplete("createchar")
-                                findNavController().navigate(SetupFragmentDirections.actionSetupFragmentToCreatecharFragment())
-                                viewModel.doneNavigating()
-                            }
-                        } else {
-                            Log.i("setup", "sharedPreferences is null")
-                        }
-                    }
-                })
+                viewModel.setIsComplete("createchar")
+                findNavController().navigate(SetupFragmentDirections.actionSetupFragmentToCreatecharFragment())
+                viewModel.doneNavigating()
             }
         })
 
@@ -102,6 +75,7 @@ class SetupFragment : Fragment() {
                 binding.setupProgressBar.visibility = View.VISIBLE
             } else {
                 binding.setupProgressBar.visibility = View.GONE
+                binding.setupConnectButton.isEnabled = true
             }
         })
 
@@ -109,6 +83,18 @@ class SetupFragment : Fragment() {
             buttonPlayer.start()
             viewModel.confirmClicked(binding.setupConnectionUrl.text.toString(), sharedPref,
                 binding, inflater, buttonPlayer)
+            binding.setupConnectButton.isEnabled = false
+            val inputMethod = activity?.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+            inputMethod.hideSoftInputFromWindow(view?.windowToken, 0)
+        }
+
+        binding.setupConnectionUrl.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                binding.setupConnectButton.performClick()
+                true
+            } else {
+                false
+            }
         }
 
         return binding.root

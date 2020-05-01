@@ -81,34 +81,39 @@ class SetupViewModel : ViewModel() {
 
                 override fun onResponse(call: Call<ConnectionResponse>, response: Response<ConnectionResponse>) {
                     Log.i("setup", "success : " + response.body() + " code : " + response.code())
-                    _loading.value = false
 
                     Log.i("setup", "in confirmClicked : sharepref = " + sharedPref)
                     if (sharedPref != null)
                     {
-                        val urls = sharedPref.getString("urls", "")
-                        val urlsList: MutableList<String>
-                        val names = sharedPref.getString("names", "")
-                        val namesList: MutableList<String>
-                        if (urls != "") {
-                            urlsList = urls.split(",").toMutableList()
-                            urlsList.add(url)
-                            namesList = names.split(",").toMutableList()
-                            namesList.add("-")
+                        if (response.code() == 200) {
+                            val urls = sharedPref.getString("urls", "")
+                            val urlsList: MutableList<String>
+                            val names = sharedPref.getString("names", "")
+                            val namesList: MutableList<String>
+                            if (urls != "" && urls != null && names != null) {
+                                urlsList = urls.split(",").toMutableList()
+                                urlsList.add(url)
+                                namesList = names.split(",").toMutableList()
+                                namesList.add("-")
+                            } else {
+                                urlsList = mutableListOf(url)
+                                namesList = mutableListOf("-")
+                            }
+                            val urlsString = urlsList.joinToString(",")
+                            val namesString = namesList.joinToString(",")
+                            val index = namesList.size - 1
+                            sharedPref.edit().putBoolean("connected", true)
+                                .putString("connectionURL", url)
+                                .putString("urls", urlsString)
+                                .putString("names", namesString)
+                                .putInt("boxIndex", index)
+                                .commit()
+                            _loading.value = false
+                            _navigateToCreateChar.value = true
                         } else {
-                            urlsList = mutableListOf(url)
-                            namesList = mutableListOf("-")
+                            _loading.value = false
+                            showPopup(binding, inflater, "something went wrong Error Code : " + response.code(), buttonPlayer)
                         }
-                        val urlsString = urlsList.joinToString(",")
-                        val namesString = namesList.joinToString(",")
-                        val index = namesList.size - 1
-                        sharedPref.edit().putBoolean("connected", true)
-                            .putString("connectionURL", url)
-                            .putString("urls", urlsString)
-                            .putString("names", namesString)
-                            .putInt("boxIndex", index)
-                            .commit()
-                        _navigateToCreateChar.value = true
                     } else {
                         Log.i("setup", "sharedPreferences is null")
                     }

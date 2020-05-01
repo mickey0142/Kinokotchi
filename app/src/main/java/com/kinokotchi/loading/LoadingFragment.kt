@@ -71,7 +71,8 @@ class LoadingFragment : Fragment() {
         if (connectionUrl != "") {
             // maybe setup url for PiApi here from sharepref first
             if (connectionUrl != null) PiApi.setupURL(connectionUrl)
-            if (sharedPref?.getString("mushroomName", "") != "") {
+            val name = sharedPref?.getString("mushroomName", "")
+            if (name != "" && name != "-") {
                 // get request before go to game fragment
                 PiApi.retrofitService.getAllStatus().enqueue(object: Callback<PiStatus> {
                     override fun onFailure(call: Call<PiStatus>, t: Throwable) {
@@ -180,14 +181,14 @@ class LoadingFragment : Fragment() {
     override fun onResume() {
         super.onResume()
 
-        val destination = viewModel.getIsComplete()
-        if (destination == "game") {
-            findNavController().navigate(LoadingFragmentDirections.actionLoadingFragmentToGameFragment())
-        } else if (destination == "createchar") {
-            findNavController().navigate(LoadingFragmentDirections.actionLoadingFragmentToCreatecharFragment())
-        } else if (destination == "setup") {
-            findNavController().navigate(LoadingFragmentDirections.actionLoadingFragmentToSetupFragment())
-        }
+//        val destination = viewModel.getIsComplete()
+//        if (destination == "game") {
+//            findNavController().navigate(LoadingFragmentDirections.actionLoadingFragmentToGameFragment())
+//        } else if (destination == "createchar") {
+//            findNavController().navigate(LoadingFragmentDirections.actionLoadingFragmentToCreatecharFragment())
+//        } else if (destination == "setup") {
+//            findNavController().navigate(LoadingFragmentDirections.actionLoadingFragmentToSetupFragment())
+//        }
     }
 
     override fun onDestroy() {

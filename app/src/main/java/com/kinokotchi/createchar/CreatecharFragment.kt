@@ -1,5 +1,6 @@
 package com.kinokotchi.createchar
 
+import android.app.Activity
 import android.content.Context
 import android.graphics.drawable.ColorDrawable
 import android.media.MediaPlayer
@@ -12,6 +13,8 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.PopupWindow
@@ -62,7 +65,9 @@ class CreatecharFragment : Fragment() {
                     override fun onFailure(call: Call<PiStatus>, t: Throwable) {
                         Log.i("create char", "failure : " + t.message)
                         // go to game fragment without connection
-                        sharedPref!!.edit().putBoolean("connected", false).commit()
+                        sharedPref?.edit()?.putBoolean("connected", false)?.commit()
+                        binding.createcharProgressBar.visibility = View.GONE
+                        binding.createcharCreateButton.isEnabled = true
                         Log.i("create char", "go to game fragment - can't connect")
                     }
 
@@ -84,10 +89,29 @@ class CreatecharFragment : Fragment() {
                                     .putBoolean("planted", response.body()?.planted!!)
                                     .commit()
                                 Log.i("create char", "go to game fragment - connected")
+
+                                PiApi.retrofitService.setupImage().enqueue(object: Callback<ConnectionResponse>{
+                                    override fun onFailure(call: Call<ConnectionResponse>, t: Throwable) {
+                                        Log.i("create char", "setup image failure : " + t.message)
+                                        // maybe do something here and setup again
+                                    }
+
+                                    override fun onResponse(
+                                        call: Call<ConnectionResponse>,
+                                        response: Response<ConnectionResponse>
+                                    ) {
+                                        Log.i("create char", "setup image success : " + response.body() + " code : " + response.code())
+                                    }
+                                })
+
+                                binding.createcharProgressBar.visibility = View.GONE
+                                binding.createcharCreateButton.isEnabled = true
                                 viewModel.setIsComplete("game")
                                 findNavController().navigate(CreatecharFragmentDirections.actionCreatecharFragmentToGameFragment())
                                 viewModel.doneNavigating()
                             } else {
+                                binding.createcharProgressBar.visibility = View.GONE
+                                binding.createcharCreateButton.isEnabled = true
                                 sharedPref.edit().putBoolean("connected", false).commit()
                                 viewModel.setIsComplete("game")
                                 findNavController().navigate(CreatecharFragmentDirections.actionCreatecharFragmentToGameFragment())
@@ -95,21 +119,10 @@ class CreatecharFragment : Fragment() {
                                 Log.i("create char", "go to game fragment - can't connect")
                             }
                         } else {
+                            binding.createcharProgressBar.visibility = View.GONE
+                            binding.createcharCreateButton.isEnabled = true
                             Log.i("create char", "sharedPreferences is null")
                         }
-                    }
-                })
-                PiApi.retrofitService.setupImage().enqueue(object: Callback<ConnectionResponse>{
-                    override fun onFailure(call: Call<ConnectionResponse>, t: Throwable) {
-                        Log.i("create char", "setup image failure : " + t.message)
-                        // maybe do something here and setup again
-                    }
-
-                    override fun onResponse(
-                        call: Call<ConnectionResponse>,
-                        response: Response<ConnectionResponse>
-                    ) {
-                        Log.i("create char", "setup iamge success : " + response.body() + " code : " + response.code())
                     }
                 })
             }
@@ -120,7 +133,20 @@ class CreatecharFragment : Fragment() {
             if (binding.createcharName.text.toString() == "") {
                 showPopup(binding, inflater)
             } else {
+                binding.createcharProgressBar.visibility = View.VISIBLE
+                binding.createcharCreateButton.isEnabled = false
+                val inputMethod = activity?.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+                inputMethod.hideSoftInputFromWindow(view?.windowToken, 0)
                 viewModel.confirmClicked(binding.createcharName.text.toString(), sharedPref)
+            }
+        }
+
+        binding.createcharName.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                binding.createcharCreateButton.performClick()
+                true
+            } else {
+                false
             }
         }
 
@@ -174,10 +200,11 @@ class CreatecharFragment : Fragment() {
     override fun onResume() {
         super.onResume()
 
-        if (viewModel.getIsComplete() == "game") {
-            findNavController().navigate(CreatecharFragmentDirections.actionCreatecharFragmentToGameFragment())
-            viewModel.doneNavigating()
-        }
+        // use this to fix something doesn't remember but it cause more bug now
+//        if (viewModel.getIsComplete() == "game") {
+//            findNavController().navigate(CreatecharFragmentDirections.actionCreatecharFragmentToGameFragment())
+//            viewModel.doneNavigating()
+//        }
     }
 
     override fun onDestroy() {

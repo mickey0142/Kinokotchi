@@ -18,7 +18,9 @@
         android:label="CreatecharFragment">
         <action
             android:id="@+id/action_createcharFragment_to_gameFragment"
-            app:destination="@id/gameFragment" />
+            app:destination="@id/gameFragment"
+            app:popUpTo="@id/chooseFragment"
+            app:popUpToInclusive="false" />
     </fragment>
     <fragment
         android:id="@+id/gameFragment"
@@ -64,9 +66,24 @@
         <action
             android:id="@+id/action_chooseFragment_to_creditFragment"
             app:destination="@id/creditFragment" />
+        <action
+            android:id="@+id/action_chooseFragment_to_emptyFragment"
+            app:destination="@id/emptyFragment"
+            app:popUpTo="@id/chooseFragment"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/creditFragment"
         android:name="com.kinokotchi.credit.CreditFragment"
         android:label="CreditFragment" />
+    <fragment
+        android:id="@+id/emptyFragment"
+        android:name="com.kinokotchi.helper.EmptyFragment"
+        android:label="EmptyFragment" >
+        <action
+            android:id="@+id/action_emptyFragment_to_chooseFragment"
+            app:destination="@id/chooseFragment"
+            app:popUpTo="@id/chooseFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
 </navigation>

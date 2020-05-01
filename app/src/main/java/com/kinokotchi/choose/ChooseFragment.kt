@@ -47,14 +47,17 @@ class ChooseFragment : Fragment() {
 
         viewModel.updateSignal.observe(this, Observer { updateSignal ->
             if (updateSignal) {
-                Log.i("choose", "updateSignal is true calling updateBoxList")
-                updateBoxList(sharedPref, inflater, container, binding)
+//                Log.i("choose", "updateSignal is true calling updateBoxList")
+//                updateBoxList(sharedPref, inflater, container, binding)
+                viewModel.resetUpdateSignal()
+                // cheating
+                Log.i("choose", "updateSignal is true moving to empty fragment")
+                findNavController().navigate(ChooseFragmentDirections.actionChooseFragmentToEmptyFragment())
             }
         })
 
         binding.chooseAddBox.setOnClickListener {
             buttonPlayer.start()
-            Log.i("choose", "click button play sound")
             findNavController().navigate(ChooseFragmentDirections.actionChooseFragmentToSetupFragment())
         }
 
@@ -70,8 +73,11 @@ class ChooseFragment : Fragment() {
     private fun updateBoxList(sharedPref: SharedPreferences?, inflater: LayoutInflater, container: ViewGroup?, binding: FragmentChooseBinding) {
         viewModel.resetUpdateSignal()
         if (sharedPref != null) {
+            binding.chooseList.removeAllViews()
+            Log.i("choose", "remove all view from choose list")
             val namesCheck = sharedPref.getString("names", "")
             val urlsCheck = sharedPref.getString("urls", "")
+            Log.i("choose", "urls string : " + urlsCheck)
             var isEmpty = false
             if (urlsCheck == "") {
                 isEmpty = true
@@ -106,6 +112,7 @@ class ChooseFragment : Fragment() {
                         viewModel.showPopup(binding, inflater, sharedPref, names, urls, index, buttonPlayer)
                     }
 
+                    Log.i("choose", "add view")
                     binding.chooseList.addView(box)
                     i++
                 }

@@ -320,7 +320,7 @@ class GameFragment : Fragment() {
             binding.gameReconnectButton.visibility = View.VISIBLE
 
             // temporary add ! to this if to debug without raspberry pi
-            if (!isConnected) {
+            if (isConnected) {
                 if (context != null)
                 {
                     viewModel.getHair(context, binding.gameKinokoHair, binding.gameKinokoHairRestart)

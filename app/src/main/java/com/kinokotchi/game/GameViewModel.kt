@@ -513,17 +513,7 @@ class GameViewModel : ViewModel() {
 
     fun restartGame(sharePref: SharedPreferences?, navController: NavController) {
         if (sharePref != null) {
-            // comment all this out to test other things first
-//                sharePref.edit()
-//                    .remove("lightStatus")
-//                    .remove("fanStatus")
-//                    .remove("moisture")
-//                    .remove("foodLevel")
-//                    .remove("temperature")
-//                    .remove("readyToHarvest")
-//                    .remove("encodedImage")
-//                    .remove("mushroomName")
-//                    .commit()
+//            // comment all this out to test other things first
             Log.i("game", "remove data and go to create char")
             navController.navigate(GameFragmentDirections.actionGameFragmentToCreatecharFragment())
         } else {

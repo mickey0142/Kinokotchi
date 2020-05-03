@@ -79,12 +79,16 @@ class CreatecharFragment : Fragment() {
                         {
                             if (response.code() == 200) {
                                 // go to game normally with connection
+                                if (response.body()?.temperature?.toFloat() != -1f) {
+                                    sharedPref.edit()
+                                        .putFloat("temperature", response.body()?.temperature!!.toFloat())
+                                        .commit()
+                                }
                                 sharedPref.edit().putBoolean("connected", true)
                                     .putInt("lightStatus", response.body()?.light!!)
                                     .putInt("fanStatus", response.body()?.fan!!)
                                     .putFloat("moisture", response.body()?.moisture!!.toFloat())
                                     .putBoolean("isFoodLow", response.body()?.isFoodLow!!)
-                                    .putFloat("temperature", response.body()?.temperature!!.toFloat())
                                     .putBoolean("readyToHarvest", response.body()?.readyToHarvest!!)
                                     .putBoolean("planted", response.body()?.planted!!)
                                     .commit()

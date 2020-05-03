@@ -226,11 +226,13 @@ class GameFragment : Fragment() {
                 binding.gameFoodName.text = getString(R.string.water)
                 binding.gameFoodIcon.setImageResource(R.drawable.water)
                 foodAnimationResource = R.drawable.water_anim
+                Log.i("game", "in water")
             } else if (foodChoice == 2) {
                 binding.gameFoodSize.text = getString(R.string.size_small)
                 binding.gameFoodName.text = getString(R.string.cola)
                 binding.gameFoodIcon.setImageResource(R.drawable.cola)
                 foodAnimationResource = R.drawable.cola_anim
+                Log.i("game", "in cola")
             } else if (foodChoice == 3) {
                 binding.gameFoodSize.text = getString(R.string.size_medium)
                 binding.gameFoodName.text = getString(R.string.apple)
@@ -246,11 +248,13 @@ class GameFragment : Fragment() {
                 binding.gameFoodName.text = getString(R.string.burger)
                 binding.gameFoodIcon.setImageResource(R.drawable.burger)
                 foodAnimationResource = R.drawable.burger_anim
+                Log.i("game", "in burger")
             } else if (foodChoice == 6) {
                 binding.gameFoodName.text = getString(R.string.size_large)
                 binding.gameFoodName.text = getString(R.string.rice)
                 binding.gameFoodIcon.setImageResource(R.drawable.rice)
                 foodAnimationResource = R.drawable.rice_anim
+                Log.i("game", "in food")
             }
         })
 
@@ -413,7 +417,6 @@ class GameFragment : Fragment() {
                         }
 
                         override fun onAnimationEnd(animation: Animator?) {
-//                            viewModel.restartGame(sharedPref, findNavController())
                             viewModel.showLastPopup(binding, inflater, sharedPref, findNavController(), getString(R.string.restart_instruction))
                         }
 

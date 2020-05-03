@@ -31,10 +31,26 @@ class NotiWorker(appContext: Context, workerParams: WorkerParameters)
         var piStatus: PiStatus?
 
         // maybe add loop here
-        val mushroomName = sharedPreference?.getString("mushroomName", "")
-        val sleepiness = sharedPreference?.getInt("sleepiness", -1)
+        val urls = sharedPreference.getString("urls", "")
+        val urlsList: MutableList<String>
+        val names = sharedPreference.getString("names", "")
+        val namesList: MutableList<String>
+        if (urls != "" && names != "") {
+            urlsList = urls.split(",").toMutableList()
+            namesList = names.split(",").toMutableList()
+        } else {
+            urlsList = mutableListOf()
+            namesList = mutableListOf()
+        }
 
-        if (sharedPreference?.getString("connectionURL", "") != "") {
+        var i = 0
+        for (url in urlsList) {
+            val index = i
+
+            val mushroomName = namesList.get(index)
+            val boxUrl = urlsList.get(index)
+            val sleepiness = sharedPreference?.getInt("sleepiness", -1)
+            PiApi.setupURL(boxUrl)
             if (mushroomName != "") {
                 PiApi.retrofitService.getAllStatus().enqueue(object: Callback<PiStatus> {
                     override fun onFailure(call: Call<PiStatus>, t: Throwable) {
@@ -73,7 +89,7 @@ class NotiWorker(appContext: Context, workerParams: WorkerParameters)
                             }
 
                             if (getStatusSuccess && piStatus != null && notiText != "") {
-                                Log.i("noti", "get status success")
+                                Log.i("noti", "get status for " + mushroomName + " success")
 
                                 val pendingIntent: PendingIntent = PendingIntent.getActivity(applicationContext, 0, intent, 0)
 
@@ -85,8 +101,6 @@ class NotiWorker(appContext: Context, workerParams: WorkerParameters)
                                     .setAutoCancel(true)
                                     .setContentIntent(pendingIntent)
                                     .setDefaults(NotificationCompat.DEFAULT_VIBRATE or NotificationCompat.DEFAULT_SOUND)
-//                                    .setStyle(NotificationCompat.BigTextStyle()
-//                                        .bigText(notiText)) // somehow this is not working
 
                                 with(NotificationManagerCompat.from(applicationContext)){
                                     notify(0, build.build())
@@ -98,10 +112,9 @@ class NotiWorker(appContext: Context, workerParams: WorkerParameters)
                     }
                 })
             }
-        }
 
-        // have to think of when to notify user in various cases
-        // no noti when opening for first time or when there is no internet
+            i++
+        }
 
         Log.i("noti", "do work !")
         return Result.success()

@@ -3,10 +3,12 @@ package com.kinokotchi
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
+import android.content.SharedPreferences
 import android.media.MediaPlayer
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import androidx.work.*
 import com.kinokotchi.helper.NotiWorker
 import com.kinokotchi.helper.SleepinessWorker
@@ -20,16 +22,17 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-
+        val sharedPref = getSharedPreferences("Kinokotchi", Context.MODE_PRIVATE)
         player = MediaPlayer.create(applicationContext, R.raw.eight_bit_menu)
         player.isLooping = true
         player.setVolume(100f, 100f)
         player.start()
 
+
         createNotificationChannel()
 
         // maybe move this into on destroy or on pause
-                setupNotification()
+        setupNotification(sharedPref)
     }
 
     override fun onDestroy() {
@@ -66,20 +69,23 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupNotification(){
+    private fun setupNotification(sharedPref: SharedPreferences){
         val constraint = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.CONNECTED)
             .build()
         val notiRequest = PeriodicWorkRequestBuilder<NotiWorker>(6, TimeUnit.HOURS)
             .setConstraints(constraint)
             .build()
-        WorkManager.getInstance(this)
-            .enqueueUniquePeriodicWork("noti", ExistingPeriodicWorkPolicy.REPLACE, notiRequest)
-        WorkManager.getInstance(this).cancelAllWork() // temporary disable notification remove this later
-        val sleepinessCalculate = PeriodicWorkRequestBuilder<SleepinessWorker>(1, TimeUnit.HOURS)
-            .build()
-        WorkManager.getInstance(this)
-            .enqueueUniquePeriodicWork("sleepiness", ExistingPeriodicWorkPolicy.KEEP, sleepinessCalculate)
-
+        val setWork = sharedPref.getBoolean("setWork", false)
+        if (!setWork) {
+            WorkManager.getInstance(this)
+                .enqueueUniquePeriodicWork("noti", ExistingPeriodicWorkPolicy.KEEP, notiRequest)
+//        WorkManager.getInstance(this).cancelAllWork() // temporary disable notification remove this later
+            val sleepinessCalculate = PeriodicWorkRequestBuilder<SleepinessWorker>(1, TimeUnit.HOURS)
+                .build()
+            WorkManager.getInstance(this)
+                .enqueueUniquePeriodicWork("sleepiness", ExistingPeriodicWorkPolicy.KEEP, sleepinessCalculate)
+            sharedPref.edit().putBoolean("setWork", true).commit()
+        }
     }
 }

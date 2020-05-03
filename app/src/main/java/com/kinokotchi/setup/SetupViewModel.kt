@@ -110,6 +110,9 @@ class SetupViewModel : ViewModel() {
                                 .commit()
                             _loading.value = false
                             _navigateToCreateChar.value = true
+                        } else if (response.code() == 502) {
+                            _loading.value = false
+                            showPopup(binding, inflater, "box's program not running. please restart box", buttonPlayer)
                         } else {
                             _loading.value = false
                             showPopup(binding, inflater, "something went wrong Error Code : " + response.code(), buttonPlayer)
